@@ -4,27 +4,27 @@ export const CITIES: Record<string, CityInfo> = {
   barcelona: {
     id: 'barcelona',
     name: 'Barcelona',
-    phone: '696669689',
-    phoneFormatted: '696 669 689',
-    whatsappNumber: '+34696669689',
+    phone: '664065855',
+    phoneFormatted: '664 065 855',
+    whatsappNumber: '+34664065855',
     regionLabel: 'BARCELONA Y ALREDEDORES',
     description: 'Soporte técnico inmediato en toda la provincia de Barcelona y área metropolitana (Hospitalet, Badalona, Sabadell, Terrassa, etc.).'
   },
   madrid: {
     id: 'madrid',
     name: 'Madrid',
-    phone: '611223344',
-    phoneFormatted: '611 223 344',
-    whatsappNumber: '+34611223344',
+    phone: '664065855',
+    phoneFormatted: '664 065 855',
+    whatsappNumber: '+34664065855',
     regionLabel: 'MADRID Y COMUNIDAD',
     description: 'Servicio urgente y ordinario en Madrid capital, Móstoles, Alcalá de Henares, Leganés, Getafe, Alcorcón y resto de la Comunidad.'
   },
   valencia: {
     id: 'valencia',
     name: 'Valencia',
-    phone: '633445566',
-    phoneFormatted: '633 445 566',
-    whatsappNumber: '+34633445566',
+    phone: '664065855',
+    phoneFormatted: '664 065 855',
+    whatsappNumber: '+34664065855',
     regionLabel: 'VALENCIA Y PROVINCIA',
     description: 'Atención rápida en Valencia capital, Torrent, Gandia, Paterna, Sagunt, Alzira y municipios limítrofes.'
   }
