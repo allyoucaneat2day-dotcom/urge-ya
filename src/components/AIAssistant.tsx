@@ -492,44 +492,101 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
     
     // Set language and find appropriate voice
     const voices = window.speechSynthesis?.getVoices() || [];
-    let langCode = 'es-ES';
-    let maleVoiceHints: string[] = [];
+    let targetLocale = 'es-ES';
 
     if (targetLang === 'en') {
-      langCode = 'en-US';
-      maleVoiceHints = ['daniel', 'james', 'david', 'mark', 'george', 'richard', 'google us english male', 'microsoft david', 'male'];
+      targetLocale = 'en-US';
     } else if (targetLang === 'ca') {
-      langCode = 'ca-ES';
-      maleVoiceHints = ['pau', 'jordi', 'albert', 'male', 'home', 'local'];
+      targetLocale = 'ca-ES';
     } else if (targetLang === 'fr') {
-      langCode = 'fr-FR';
-      maleVoiceHints = ['paul', 'jean', 'pierre', 'nicolas', 'male', 'homme'];
+      targetLocale = 'fr-FR';
     } else {
-      langCode = 'es-ES';
-      maleVoiceHints = ['pablo', 'jorge', 'alvaro', 'julio', 'diego', 'manuel', 'david', 'male', 'hombre', 'esf-local', 'eed-local'];
+      targetLocale = 'es-ES';
     }
 
-    utterance.lang = langCode;
-    
-    // Reassuring, natural human pacing
-    utterance.rate = 1.0; 
-    utterance.pitch = targetLang === 'en' ? 0.90 : 0.95;
-    utterance.volume = 1.0;
+    utterance.lang = targetLocale;
 
-    const filteredVoices = voices.filter(v => v.lang.toLowerCase().startsWith(targetLang));
-    
-    let selectedVoice = filteredVoices.find(voice => {
-      const nameLower = voice.name.toLowerCase();
-      return maleVoiceHints.some(hint => nameLower.includes(hint));
+    // Filter voices that match the exact target locale (e.g., es-ES, en-US) or general language code
+    const exactLocaleVoices = voices.filter(v => {
+      const vLang = v.lang.toLowerCase().replace('_', '-');
+      return vLang === targetLocale.toLowerCase();
     });
 
-    if (!selectedVoice) {
-      selectedVoice = filteredVoices[0] || voices.find(v => v.lang.toLowerCase().startsWith('es')) || voices[0];
+    const fallbackLangVoices = voices.filter(v => {
+      const vLang = v.lang.toLowerCase().replace('_', '-');
+      return vLang.startsWith(targetLang);
+    });
+
+    const candidateVoices = exactLocaleVoices.length > 0 ? exactLocaleVoices : fallbackLangVoices;
+
+    // Dynamically score candidate voices to find the most hyperrealistic and natural human one!
+    let bestVoice = null;
+    let highestScore = -1000;
+
+    candidateVoices.forEach(voice => {
+      let score = 0;
+      const nameLower = voice.name.toLowerCase();
+      const voiceLang = voice.lang.toLowerCase().replace('_', '-');
+
+      // 1. Exact locale match gets extra priority (ensure native Spain, US English, etc.)
+      if (voiceLang === targetLocale.toLowerCase()) {
+        score += 200;
+      }
+
+      // 2. Hyper-realism/Premium keywords (Chrome Online, Edge Neural/Online, Apple Siri/Enhanced)
+      // These sound highly natural, smooth, and human compared to basic robotic offline engines.
+      const premiumKeywords = ['natural', 'neural', 'online', 'google', 'siri', 'enhanced', 'premium', 'multilingual', 'high-quality', 'hi-fi', 'hifi', 'microsoft'];
+      premiumKeywords.forEach(keyword => {
+        if (nameLower.includes(keyword)) {
+          score += 150;
+        }
+      });
+
+      // 3. Gender preference (Tony is male, so we prefer male natural/premium voices if available)
+      // If there's a premium/natural male voice, it gets the highest weight.
+      // If there's only a robotic male voice vs a premium female voice, the premium female voice wins (score +150 > score +40).
+      const maleIndicators = [
+        'male', 'hombre', 'home', 'homme', 'pablo', 'jorge', 'alvaro', 'julio', 'diego', 'manuel', 'david',
+        'daniel', 'james', 'mark', 'george', 'richard', 'pau', 'jordi', 'albert', 'paul', 'jean', 'pierre', 'nicolas'
+      ];
+      if (maleIndicators.some(indicator => nameLower.includes(indicator))) {
+        score += 40;
+      }
+
+      // Explicitly penalize old legacy voices known to sound extremely robotic or low quality
+      const lowQualityKeywords = ['classic', 'synthesizer', 'microsoft david', 'microsoft hazel', 'microsoft zira'];
+      lowQualityKeywords.forEach(keyword => {
+        if (nameLower.includes(keyword)) {
+          score -= 100;
+        }
+      });
+
+      if (score > highestScore) {
+        highestScore = score;
+        bestVoice = voice;
+      }
+    });
+
+    if (!bestVoice && candidateVoices.length > 0) {
+      bestVoice = candidateVoices[0];
+    }
+    if (!bestVoice && voices.length > 0) {
+      bestVoice = voices[0];
     }
 
-    if (selectedVoice) {
-      utterance.voice = selectedVoice;
+    if (bestVoice) {
+      utterance.voice = bestVoice;
+      // Adjust speed for a very deliberate, comforting, reassuring and professional pace
+      const nameL = bestVoice.name.toLowerCase();
+      const isNeural = nameL.includes('natural') || nameL.includes('neural') || nameL.includes('online') || nameL.includes('siri') || nameL.includes('enhanced');
+      utterance.rate = isNeural ? 0.98 : 0.92;
+      utterance.pitch = targetLang === 'en' ? 0.95 : 1.0;
+    } else {
+      utterance.rate = 0.95;
+      utterance.pitch = 1.0;
     }
+
+    utterance.volume = 1.0;
 
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
