@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  
+  /* Sleek Interface Color Theme */
+  --color-primary: #0C356A;
+  --color-secondary: #0174BE;
+  --color-accent: #FFC436;
+  --color-success: #25D366;
+  --color-bg-light: #F4F6F9;
+}
+
+@keyframes pulse-gentle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.025); }
+}
+
+.pulse-gentle {
+  animation: pulse-gentle 2.5s infinite ease-in-out;
+}
+
+/* Additional layout overrides or animations matching the Sleek theme */
+html {
+  scroll-behavior: smooth;
+  background-color: #F4F6F9;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: #1e293b; /* slate-800 */
+}
+
+/* Custom Voice Equalizer visualizer animations */
+@keyframes voice-bar-1 {
+  0%, 100% { height: 4px; }
+  50% { height: 14px; }
+}
+@keyframes voice-bar-2 {
+  0%, 100% { height: 6px; }
+  50% { height: 16px; }
+}
+@keyframes voice-bar-3 {
+  0%, 100% { height: 3px; }
+  50% { height: 12px; }
+}
+@keyframes voice-bar-4 {
+  0%, 100% { height: 5px; }
+  50% { height: 15px; }
+}
+@keyframes pulse-subtle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-voice-bar-1 {
+  animation: voice-bar-1 0.8s infinite ease-in-out;
+}
+.animate-voice-bar-2 {
+  animation: voice-bar-2 0.6s infinite ease-in-out;
+}
+.animate-voice-bar-3 {
+  animation: voice-bar-3 0.7s infinite ease-in-out;
+}
+.animate-voice-bar-4 {
+  animation: voice-bar-4 0.9s infinite ease-in-out;
+}
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s infinite ease-in-out;
+}
+.animate-spin-slow {
+  animation: spin-slow 8s infinite linear;
+}
+
