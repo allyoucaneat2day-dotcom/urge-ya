@@ -33,20 +33,20 @@ const LANGUAGES = [
 
 const WELCOME_MESSAGES = {
   es: {
-    text: `¡Hola! Soy **Tony**, su **Asistente de Voz Inteligente** de **Urge Ya** en **{city}**. 🤖🔊\n\nEstoy preparado para responderle por voz de forma inmediata y gestionar su avería urgente.\n\n📸 **¡NUEVA FUNCIÓN DISPONIBLE!** Ahora puede **subir una foto de su avería** (tuberías rotas, llaves atascadas, cables quemados o fugas) pulsando el botón de la cámara para que la analice de inmediato con Inteligencia Artificial.\n\nOfrezco soporte en **castellano, inglés, catalán y francés**.\n\nCuénteme, ¿tiene alguna emergencia con **fugas de agua**, **apagones de luz**, **cerrajería de urgencia** o **fallos en su caldera**? O elija un idioma en la barra superior.`,
-    spoken: `Hola, soy Tony, su asistente de voz de Urge Ya en {city}. Ahora puede subir una foto de su avería pulsando el botón de la cámara para que la analice con Inteligencia Artificial. Dígame qué avería urgente tiene o seleccione su idioma.`
+    text: `¡Hola! Soy **Noelia**, tu **asistente de Urge-Ya para emergencias del hogar** en **{city}**. 🤖🔊\n\nEstoy preparada para responderte por voz de forma inmediata y gestionar tu avería urgente.\n\n📸 **¡NUEVA FUNCIÓN DISPONIBLE!** Ahora puedes **subir una foto de tu avería** (tuberías rotas, llaves atascadas, cables quemados o fugas) pulsando el botón de la cámara para que la analice de inmediato con Inteligencia Artificial.\n\nOfrezco soporte en **castellano, inglés, catalán y francés**.\n\nCuéntame, ¿tienes alguna emergencia con **fugas de agua**, **apagones de luz**, **cerrajería de urgencia** o **fallos en tu caldera**? O elige un idioma en la barra superior.`,
+    spoken: `Hola, soy Noelia, tu asistente de Urge-Ya para emergencias del hogar en {city}. Puedes subir una foto de tu avería pulsando el botón de la cámara para que la analice con Inteligencia Artificial. Cuéntame qué emergencia tienes o selecciona tu idioma.`
   },
   en: {
-    text: `Hello! I am **Tony**, your **AI Voice Assistant** from **Urge Ya** in **{city}**. 🤖🔊\n\nI am ready to speak and understand your language (English, Spanish, Catalan, or French).\n\n📸 **NEW FEATURE!** You can now **upload/snap a photo of your breakdown** (leaking pipe, burned wire, stuck door) using the camera button, and I will instantly analyze the image using Gemini AI.\n\nHow can I help you with your **plumbing**, **electrical**, **locksmith**, or **boiler** emergency today?`,
-    spoken: `Hello! I am Tony, your voice assistant from Urge Ya in {city}. You can now upload a photo of your breakdown using the camera button for an instant artificial intelligence analysis. Please tell me what emergency you have.`
+    text: `Hello! I am **Noelia**, your **AI Voice Assistant** from **Urge Ya** in **{city}**. 🤖🔊\n\nI am ready to speak and understand your language (English, Spanish, Catalan, or French).\n\n📸 **NEW FEATURE!** You can now **upload/snap a photo of your breakdown** (leaking pipe, burned wire, stuck door) using the camera button, and I will instantly analyze the image using Gemini AI.\n\nHow can I help you with your **plumbing**, **electrical**, **locksmith**, or **boiler** emergency today?`,
+    spoken: `Hello! I am Noelia, your voice assistant from Urge Ya in {city}. You can now upload a photo of your breakdown using the camera button for an instant artificial intelligence analysis. Please tell me what emergency you have.`
   },
   ca: {
-    text: `Hola! Soc en **Tony**, el seu **Assistent de Veu Intel·ligent** d'**Urge Ya** a **{city}**. 🤖🔊\n\nEstic preparat per respondre-li per veu en l'idioma que prefereixi (Català, Castellà, Anglès o Francès).\n\n📸 **NOVA FUNCIÓ!** Ara pot **pujar una foto de la seva avaria** (fuga d'aigua, pany trencat, cables cremats) prement el botó de la càmera perquè l'analitzi immediatament amb Intel·ligència Artificial.\n\nExpliqui'm, té alguna emergència amb **fuga d'aigua**, **tall de llum**, **serralleria** o **caldera**? O seleccioni un idioma a la barra de dalt.`,
-    spoken: `Hola, soc en Tony, el seu assistent de veu d'Urge Ya a {city}. Ara pot pujar una foto de la seva avaria prement el botó de la càmera perquè l'analitzi amb Intel·ligència Artificial. Expliqui'm quina avaria urgent té o seleccioni el seu idioma.`
+    text: `Hola! Soc la **Noelia**, la seva **Assistent de Veu Intel·ligent** d'**Urge Ya** a **{city}**. 🤖🔊\n\nEstic preparada per respondre-li per veu en l'idioma que prefereixi (Català, Castellà, Anglès o Francès).\n\n📸 **NOVA FUNCIÓ!** Ara pot **pujar una foto de la seva avaria** (fuga d'aigua, pany trencat, cables cremats) prement el botó de la càmera perquè l'analitzi immediatament amb Intel·ligència Artificial.\n\nExpliqui'm, té alguna emergència amb **fuga d'aigua**, **tall de llum**, **serralleria** o **caldera**? O seleccioni un idioma a la barra de dalt.`,
+    spoken: `Hola, soc la Noelia, la seva assistenta de veu d'Urge Ya a {city}. Ara pot pujar una foto de la seva avaria prement el botó de la càmera perquè l'analitzi amb Intel·ligència Artificial. Expliqui'm quina avaria urgent té o seleccioni el seu idioma.`
   },
   fr: {
-    text: `Bonjour ! Je suis **Tony**, votre **Assistant Vocal Intelligent** d'**Urge Ya** à **{city}**. 🤖🔊\n\nJe suis prêt à vous répondre par voix dans votre langue préférée (Français, Espagnol, Anglais ou Catalan).\n\n📸 **NOUVEAU !** Vous pouvez maintenant **télécharger/prendre une photo de votre panne** (fuite, court-circuit, serrure bloquée) en cliquant sur le bouton de l'appareil photo, et je l'analyserai instantanément grâce à l'IA.\n\nQuelle est votre urgence aujourd'hui (fuite d'eau, panne de courant, serrurerie ou chaudière) ? Vous pouvez aussi choisir une langue ci-dessus.`,
-    spoken: `Bonjour, je suis Tony, votre assistant vocal d'Urge Ya à {city}. Vous pouvez maintenant charger une photo de votre panne avec l'appareil photo pour une analyse par intelligence artificielle. Dites-moi quel est votre problème.`
+    text: `Bonjour ! Je suis **Noelia**, votre **Assistant Vocal Intelligent** d'**Urge Ya** à **{city}**. 🤖🔊\n\nJe suis prête à vous répondre par voix dans votre langue préférée (Français, Espagnol, Anglais ou Catalan).\n\n📸 **NOUVEAU !** Vous pouvez maintenant **télécharger/prendre une photo de votre panne** (fuite, court-circuit, serrure bloquée) en cliquant sur le bouton de l'appareil photo, et je l'analyserai instantanément grâce à l'IA.\n\nQuelle est votre urgence aujourd'hui (fuite d'eau, panne de courant, serrurerie ou chaudière) ? Vous pouvez aussi choisir une langue ci-dessus.`,
+    spoken: `Bonjour, je suis Noelia, votre assistante vocale d'Urge Ya à {city}. Vous pouvez maintenant charger une photo de votre panne avec l'appareil photo pour une analyse par intelligence artificielle. Dites-moi quel est votre problème.`
   }
 };
 
@@ -82,7 +82,7 @@ const UI_LABELS = {
     btnCloseTicket: "Cerrar Ticket",
     processingVoice: "Procesando mensaje de voz",
     dictateTitle: "Dictar por Voz (Hablar)",
-    speakWelBtn: "Tony - Gestor de Voz",
+    speakWelBtn: "Noelia - Gestor de Voz",
     headerSubtitle: "Asistencia Técnica de Urgencia 24h",
     muteVoice: "Mutear Asistencia de Voz",
     unmuteVoice: "Desmutear Asistencia de Voz",
@@ -120,7 +120,7 @@ const UI_LABELS = {
     btnCloseTicket: "Close Ticket",
     processingVoice: "Processing voice input",
     dictateTitle: "Dictate by Voice (Speak)",
-    speakWelBtn: "Tony - Voice Manager",
+    speakWelBtn: "Noelia - Voice Manager",
     headerSubtitle: "24/7 Urgent Technical Assistance",
     muteVoice: "Mute Voice Assistance",
     unmuteVoice: "Unmute Voice Assistance",
@@ -158,7 +158,7 @@ const UI_LABELS = {
     btnCloseTicket: "Tancar Ticket",
     processingVoice: "Processant missatge de veu",
     dictateTitle: "Dictar per Veu (Parlar)",
-    speakWelBtn: "Tony - Gestor de Veu",
+    speakWelBtn: "Noelia - Gestor de Veu",
     headerSubtitle: "Assistència Tècnica d'Urgència 24h",
     muteVoice: "Silenciar Assistència de Veu",
     unmuteVoice: "Activar Assistència de Veu",
@@ -196,7 +196,7 @@ const UI_LABELS = {
     btnCloseTicket: "Fermer le Ticket",
     processingVoice: "Traitement de la voix en cours",
     dictateTitle: "Dicter par Voix (Parler)",
-    speakWelBtn: "Tony - Gestionnaire Vocal",
+    speakWelBtn: "Noelia - Gestionnaire Vocal",
     headerSubtitle: "Assistance Technique d'Urgence 24h/24",
     muteVoice: "Couper l'assistance vocale",
     unmuteVoice: "Activar l'assistance vocale",
@@ -209,105 +209,105 @@ const MULTILINGUAL_RESPONSES: Record<string, Record<string, { text: string; spok
   es: {
     fuga: {
       text: "🚨 **¡ALERTA DE FONTANERÍA! INSTRUCCIONES DE EMERGENCIA:**\n\n1. **Cierre de inmediato la llave de paso general** de su hogar para detener la inundación.\n2. **Corte el suministro eléctrico** en las zonas afectadas para evitar un cortocircuito.\n3. **Recoja el agua estancada** y resguarde sus pertenencias.\n\nTenemos fontaneros urgentes homologados en **{city}** listos para salir ya. El tiempo medio de llegada es de **15 a 20 minutos**. ¿Facilitamos el envío de un técnico inmediato?",
-      spoken: "Hola, soy Tony. Por favor, mantenga la calma. Le recomiendo cerrar de inmediato la llave de paso principal de su vivienda para detener la inundación, y desconectar la electricidad si el agua se extiende. Nuestros fontaneros en {city} están disponibles de inmediato. Llegaremos en menos de veinte minutos."
+      spoken: "Hola, soy Noelia. Por favor, mantenga la calma. Le recomiendo cerrar de inmediato la llave de paso principal de su vivienda para detener la inundación, y desconectar la electricidad si el agua se extiende. Nuestros fontaneros en {city} están disponibles de inmediato. Llegaremos en menos de veinte minutos."
     },
     apagón: {
       text: "⚡ **¡ALERTA DE ELECTRICIDAD! INSTRUCCIONES DE EMERGENCIA:**\n\n1. **No manipule cables expuestos** ni toque el cuadro eléctrico con las manos húmedas.\n2. **Verifique el interruptor diferencial:** Si ha saltado, intente rearmarlo una vez desenchufado el último electrodoméstico.\n3. **Evite el contacto directo con agua** en áreas con enchufes inundados.\n\nDisponemos de electricistas autorizados de guardia 24 horas en **{city}**. ¿Le enviamos un técnico homologado de urgencia?",
-      spoken: "Hola, le saluda Tony. Por favor, por su seguridad, no toque ningún cable expuesto ni manipule el cuadro eléctrico con las manos húmedas. Si se ha producido un cortocircuito o un apagón general, nuestros electricistas de guardia en {city} llegarán en menos de veinte minutos para restablecer su servicio de forma totalmente segura."
+      spoken: "Hola, le saluda Noelia. Por favor, por su seguridad, no toque ningún cable expuesto ni manipule el cuadro eléctrico con las manos húmedas. Si se ha producido un cortocircuito o un apagón general, nuestros electricistas de guardia en {city} llegarán en menos de veinte minutos para restablecer su servicio de forma totalmente segura."
     },
     cerrajeria: {
       text: "🔑 **¡URGENCIA DE CERRAJERÍA! INSTRUCCIONES DE SEGURIDAD:**\n\n1. **Manténgase en una zona segura** y visible mientras espera al técnico.\n2. **No intente forzar la cerradura** con tarjetas u objetos metálicos; podría dañar el mecanismo interno.\n3. **Prepare un documento de identidad** que confirme su acceso a la vivienda.\n\nNuestros cerrajeros autorizados de **{city}** realizan aperturas limpias de puertas y cambios de bombines urgentes en 15 minutos. ¿Enviamos un cerrajero de guardia?",
-      spoken: "Soy Tony. Si se ha quedado fuera de casa, ha perdido las llaves o necesita cambiar su cerradura por motivos de seguridad, no se preocupe. Contamos con cerrajeros autorizados en {city} de guardia constante. Realizaremos una apertura limpia, sin ningún tipo de daños, en unos quince minutos."
+      spoken: "Soy Noelia. Si se ha quedado fuera de casa, ha perdido las llaves o necesita cambiar su cerradura por motivos de seguridad, no se preocupe. Contamos con cerrajeros autorizados en {city} de guardia constante. Realizaremos una apertura limpia, sin ningún tipo de daños, en unos quince minutos."
     },
     caldera: {
       text: "🔥 **¡AVISO DE CALDERAS Y CALEFACCIÓN! COMPROBACIONES RÁPIDAS:**\n\n1. **Verifique la presión del agua:** El manómetro de la caldera debe marcar entre **1.2 y 1.5 bar**.\n2. **Compruebe el suministro de gas:** Asegúrese de que la llave general de paso está abierta.\n3. **Evite manipular conductos internos:** Es extremadamente peligroso si no es un técnico autorizado.\n\nNuestros técnicos de gas en **{city}** reparan todas las marcas (Vaillant, Junkers, Saunier Duval). ¿Desea agendar asistencia inmediata?",
-      spoken: "Hola, soy Tony. Le sugiero comprobar si el manómetro de agua está entre uno con dos y uno con cinco bar. Asegúrese también de que la llave de gas esté completamente abierta. Nuestros técnicos certificados en {city} están totalmente preparados para acudir y solucionar el fallo de inmediato."
+      spoken: "Hola, soy Noelia. Le sugiero comprobar si el manómetro de agua está entre uno con dos y uno con cinco bar. Asegúrese también de que la llave de gas esté completamente abierta. Nuestros técnicos certificados en {city} están totalmente preparados para acudir y solucionar el fallo de inmediato."
     },
     precio: {
       text: "📋 **POLÍTICA DE TARIFAS TRANSPARENTES DE URGE YA:**\n\n• **Desplazamiento 100% Gratuito:** No cobramos costes de viaje si se aprueba y realiza la reparación técnica.\n• **Presupuestos Cerrados por Escrito:** El técnico evalúa la avería en persona y le da un coste fijo garantizado antes de trabajar.\n• **Tarifas Directas:** Sin intermediarios ni costes ocultos.\n\n¿Quiere indicarnos qué avería tiene para orientarle mejor en el precio?",
-      spoken: "Soy Tony. Le confirmo que el desplazamiento es completamente gratuito si realiza la reparación con nosotros. Además, el técnico le facilitará un presupuesto cerrado por escrito antes de comenzar a trabajar para su total tranquilidad."
+      spoken: "Soy Noelia. Le confirmo que el desplazamiento es completamente gratuito si realiza la reparación con nosotros. Además, el técnico le facilitará un presupuesto cerrado por escrito antes de comenzar a trabajar para su total tranquilidad."
     },
     urgencia: {
       text: "🚨 **COBERTURA Y TIEMPOS DE RESPUESTA INMEDIATA:**\n\n• **Zonas de Cobertura:** Ofrecemos asistencia domiciliaria en todas las áreas de **Barcelona**, **Madrid** y **Valencia**.\n• **Tiempo de Llegada:** La media oscila entre **15 y 25 minutos** de forma garantizada.\n• **Operativos 24/7/365:** Trabajamos fines de semana y festivos de manera ininterrumpida.\n\n¿Desea que un técnico le llame directamente en menos de 5 minutos?",
-      spoken: "Hola, le saluda Tony. Ofrecemos cobertura completa de urgencia en Madrid, Barcelona y Valencia. Nuestro tiempo de respuesta habitual es de quince a veinticinco minutos las veinticuatro horas del día. Estamos listos para salir de inmediato hacia su domicilio."
+      spoken: "Hola, le saluda Noelia. Ofrecemos cobertura completa de urgencia en Madrid, Barcelona y Valencia. Nuestro tiempo de respuesta habitual es de quince a veinticinco minutos las veinticuatro horas del día. Estamos listos para salir de inmediato hacia su domicilio."
     }
   },
   en: {
     fuga: {
       text: "🚨 **PLUMBING EMERGENCY INSTRUCTIONS:**\n\n1. **Close the main water valve** immediately to stop the flooding.\n2. **Turn off electricity** in the affected areas to prevent short circuits.\n3. **Collect standing water** and protect your belongings.\n\nWe have certified emergency plumbers in **{city}** ready to go. Average arrival time is **15 to 20 minutes**. Should we dispatch a technician right away?",
-      spoken: "Hello, this is Tony. Please remain calm. I highly recommend closing your main water valve immediately to stop the leak. Our emergency plumbers in {city} are ready. We will arrive in less than twenty minutes."
+      spoken: "Hello, this is Noelia. Please remain calm. I highly recommend closing your main water valve immediately to stop the leak. Our emergency plumbers in {city} are ready. We will arrive in less than twenty minutes."
     },
     apagón: {
       text: "⚡ **ELECTRICAL EMERGENCY INSTRUCTIONS:**\n\n1. **Do not touch exposed wires** or handle the fuse box with wet hands.\n2. **Check the circuit breaker:** If it tripped, try resetting it after unplugging the last used appliance.\n3. **Avoid water contact** near flooded outlets.\n\nWe have licensed 24/7 electricians on duty in **{city}**. Shall we send an authorized technician now?",
-      spoken: "Hello, Tony here. For your safety, do not touch any exposed wires or handle the electrical panel with wet hands. If you have a short circuit or a blackout, our duty electricians in {city} will arrive in less than twenty minutes to safely restore your power."
+      spoken: "Hello, Noelia here. For your safety, do not touch any exposed wires or handle the electrical panel with wet hands. If you have a short circuit or a blackout, our duty electricians in {city} will arrive in less than twenty minutes to safely restore your power."
     },
     cerrajeria: {
       text: "🔑 **LOCKSMITH EMERGENCY INSTRUCTIONS:**\n\n1. **Stay in a safe**, visible area while waiting.\n2. **Do not force the lock** with cards or metal objects; it could damage the internal mechanism.\n3. **Prepare an ID** confirming your access to the property.\n\nOur certified locksmiths in **{city}** perform clean door openings and lock replacements in 15 minutes. Should we dispatch one now?",
-      spoken: "I am Tony. If you are locked out, lost your keys, or need an urgent lock replacement, don't worry. We have on-duty locksmiths in {city} ready. We will open your door cleanly, without any damage, in fifteen to twenty minutes."
+      spoken: "I am Noelia. If you are locked out, lost your keys, or need an urgent lock replacement, don't worry. We have on-duty locksmiths in {city} ready. We will open your door cleanly, without any damage, in fifteen to twenty minutes."
     },
     caldera: {
       text: "🔥 **BOILER & HEATING QUICK CHECKS:**\n\n1. **Check water pressure:** The boiler gauge should be between **1.2 and 1.5 bar**.\n2. **Check gas supply:** Make sure the main gas valve is open.\n3. **Do not manipulate internal parts:** It is extremely dangerous without certified training.\n\nOur gas technicians in **{city}** repair all brands (Vaillant, Junkers, Saunier Duval). Would you like to schedule immediate service?",
-      spoken: "Hello, Tony speaking. I suggest checking if your water pressure gauge is between 1.2 and 1.5 bar. Also, ensure the gas valve is fully open. Our certified boiler technicians in {city} are fully ready to help you immediately."
+      spoken: "Hello, Noelia speaking. I suggest checking if your water pressure gauge is between 1.2 and 1.5 bar. Also, ensure the gas valve is fully open. Our certified boiler technicians in {city} are fully ready to help you immediately."
     },
     precio: {
       text: "📋 **URGE YA TRANSPARENT PRICING POLICY:**\n\n• **100% Free Dispatch:** We don't charge travel fees if the repair work is approved and completed.\n• **Written Fixed Estimates:** The technician inspects the issue in person and gives a guaranteed fixed cost before starting.\n• **Direct Rates:** No intermediaries or hidden fees.\n\nWould you like to describe your issue so we can guide you on the cost?",
-      spoken: "This is Tony. I confirm that dispatch and travel are completely free if you proceed with the repair. Additionally, the technician will provide a fixed estimate in writing before starting any work for your peace of mind."
+      spoken: "This is Noelia. I confirm that dispatch and travel are completely free if you proceed with the repair. Additionally, the technician will provide a fixed estimate in writing before starting any work for your peace of mind."
     },
     urgencia: {
       text: "🚨 **COVERAGE AND IMMEDIATE RESPONSE TIMES:**\n\n• **Coverage Areas:** We provide home assistance throughout **Barcelona**, **Madrid**, and **Valencia**.\n• **Arrival Time:** Guaranteed response time of **15 to 25 minutes**.\n• **24/7/365 Operations:** We work non-stop during weekends and holidays.\n\nWould you like a technician to call you directly in less than 5 minutes?",
-      spoken: "Hello, Tony here. We offer full emergency coverage in Madrid, Barcelona, and Valencia. Our response time is fifteen to twenty-five minutes, twenty-four hours a day. We are ready to head to your address immediately."
+      spoken: "Hello, Noelia here. We offer full emergency coverage in Madrid, Barcelona, and Valencia. Our response time is fifteen to twenty-five minutes, twenty-four hours a day. We are ready to head to your address immediately."
     }
   },
   ca: {
     fuga: {
       text: "🚨 **ALERTA DE FONTANERIA! INSTRUCCIONS D'EMERGÈNCIA:**\n\n1. **Tanqui immediatament la clau de pas general** per aturar la inundació.\n2. **Talli el subministrament elèctric** a les zones afectades per evitar curtcircuits.\n3. **Reculli l'aigua** i protegeixi els seus béns.\n\nTenim fontaners urgents homologats a **{city}** llestos per sortir. Temps d'arribada: **15-20 minuts**. Enviem un tècnic immediat?",
-      spoken: "Hola, soc en Tony. Per favor, mantingui la calma. Li recomano tancar immediatament la clau de pas general de casa seva per aturar la inundació, i desconnectar l'electricitat si l'aigua s'estén. Els nostres fontaners a {city} estan disponibles. Arribarem en menys de vint minuts."
+      spoken: "Hola, soc la Noelia. Per favor, mantingui la calma. Li recomano tancar immediatament la clau de pas general de casa seva per aturar la inundació, i desconnectar l'electricitat si l'aigua s'estén. Els nostres fontaners a {city} estan disponibles. Arribarem en menys de vint minuts."
     },
     apagón: {
       text: "⚡ **ALERTA D'ELECTRICITAT! INSTRUCCIONS D'EMERGÈNCIA:**\n\n1. **No toqui cables exposats** ni el quadre elèctric amb les mans humides.\n2. **Verifiqui el diferencial:** Si ha saltat, intenti rearmar-lo un cop desendollat l'últim aparell.\n3. **Eviti el contacte amb l'aigua** prop d'endolls inundats.\n\nElectricistes autoritzats de guàrdia 24h a **{city}**. Enviem un tècnic urgent?",
-      spoken: "Hola, soc en Tony. Per la seva seguretat, no toqui cap cable exposat ni el quadre elèctric amb les mans humides. Si té un curtcircuit o una apagada general, els nostres electricistes a {city} arribaran en menys de vint minuts per restablir el servei amb total seguretat."
+      spoken: "Hola, soc la Noelia. Per la seva seguretat, no toqui cap cable exposat ni el quadre elèctric amb les mans humides. Si té un curtcircuit o una apagada general, els nostres electricistes a {city} arribaran en menys de vint minuts per restablir el servei amb total seguretat."
     },
     cerrajeria: {
       text: "🔑 **URGÈNCIA DE SERRALLERIA! INSTRUCCIONS DE SEGURIDAD:**\n\n1. **Estigui en una zona segura** i visible mentre espera el serraller.\n2. **No versi o forci la fusta o pany** amb targetes per no danyar el mecanisme.\n3. **Prepari un document d'identitat** que confirmi l'accés a l'habitatge.\n\nSerrallers autoritzats a **{city}** obren portes i canvien bombins en 15 minuts. Enviem un serraller de guàrdia?",
-      spoken: "Soc en Tony. Si s'ha quedat fora de casa, ha perdut les claus o necessita un canvi urgent de pany per seguretat, no es preocupi. Tenim serrallers a {city} de guàrdia. Realitzarem una obertura neta en uns quinze minuts."
+      spoken: "Soc la Noelia. Si s'ha quedat fora de casa, ha perdut les claus o necessita un canvi urgent de pany per seguretat, no es preocupi. Tenim serrallers a {city} de guàrdia. Realitzarem una obertura neta en uns quinze minuts."
     },
     caldera: {
       text: "🔥 **AVÍS DE CALDERES I CALEFACCIÓ! COMPROBACIONS RÀPIDES:**\n\n1. **Pressió de l'aigua:** El manòmetre de la caldera ha d'estar entre **1.2 i 1.5 bar**.\n2. **Subministrament de gas:** Comprovi que la clau de pas està oberta.\n3. **No manipuli tubs interns**: És molt perillós si no s'és tècnic homologat.\n\nTècnics de gas de guàrdia a **{city}**. Vol agendar assistència immediata?",
-      spoken: "Hola, soc en Tony. Li suggereixo comprovar si la pressió d'aigua de la caldera està entre un punt dos i un punt cinc bar. Els nostres tècnics homologats a {city} estan preparats per venir i solucionar el problema de forma immediata."
+      spoken: "Hola, soc la Noelia. Li suggereixo comprovar si la pressió d'aigua de la caldera està entre un punt dos i un punt cinc bar. Els nostres tècnics homologats a {city} estan preparats per venir i solucionar el problema de forma immediata."
     },
     precio: {
       text: "📋 **POLÍTICA DE PREUS TRANSPARENTS D'URGE YA:**\n\n• **Desplaçament Gratuït:** Sense despeses de viatge si es realitza la reparació amb nosaltres.\n• **Pressupostos Tancats per Escrit:** El tècnic avalua l'avaria i dóna un cost tancat abans de començar.\n• **Tarifes Directes:** Sense sorpreses ni intermediaris.\n\nEns indica quina avaria té per donar-li un preu orientatiu?",
-      spoken: "Soc en Tony. El desplaçament és completament gratuït si realitza la reparació con nosotros. A més, el tècnic li farà un pressupost tancat per escrit abans de començar a treballar per a la seva tranquil·litat."
+      spoken: "Soc la Noelia. El desplaçament és completament gratuït si realitza la reparació con nosotros. A més, el tècnic li farà un pressupost tancat per escrit abans de començar a treballar per a la seva tranquil·litat."
     },
     urgencia: {
       text: "🚨 **COBERTURA I TEMPS DE RESPOSTA IMMEDIATA:**\n\n• **Cobertura:** Assistència a tot **Barcelona**, **Madrid** i **València**.\n• **Temps d'Arribada:** Entre **15 i 25 minuts** garantits.\n• **Guàrdia 24h/365:** Treballem dissabtes, diumenges i festius de forma ininterrompuda.\n\nVol que un tècnic li truqui en menys de 5 minuts?",
-      spoken: "Hola, soc en Tony. Oferim cobertura de guàrdia a Madrid, Barcelona i València. Arribem habitualment en un termini de quinze a vint-i-cinc minuts, les vint-i-quatre hores del dia."
+      spoken: "Hola, soc la Noelia. Oferim cobertura de guàrdia a Madrid, Barcelona i València. Arribem habitualment en un termini de quinze a vint-i-cinc minuts, les vint-i-quatre hores del dia."
     }
   },
   fr: {
     fuga: {
       text: "🚨 **INSTRUCTIONS D'URGENCE PLOMBERIE :**\n\n1. **Fermez immédiatement la vanne d'arrivée d'eau** générale pour stopper l'inondation.\n2. **Coupez l'électricité** dans les zones touchées pour éviter les courts-circuits.\n3. **Épongez l'eau stagnante** et mettez vos biens à l'abri.\n\nNos plombiers certifiés à **{city}** sont prêts à intervenir. Délai moyen : **15 à 20 minutes**. Devons-nous envoyer un technicien ?",
-      spoken: "Bonjour, c'est Tony. Gardez votre calme. Je vous conseille de fermer immédiatement la vanne d'eau générale. Nos plombiers à {city} sont prêts à partir et arriveront en moins de vingt minutes."
+      spoken: "Bonjour, c'est Noelia. Gardez votre calme. Je vous conseille de fermer immédiatement la vanne d'eau générale. Nos plombiers à {city} sont prêts à partir et arriveront en moins de vingt minutes."
     },
     apagón: {
       text: "⚡ **INSTRUCTIONS D'URGENCE ÉLECTRICITÉ :**\n\n1. **Ne touchez pas aux fils dénudés** et ne manipulez pas le tableau électrique les mains humides.\n2. **Vérifiez le disjoncteur :** S'il a sauté, essayez de le réarmer après avoir débranché le dernier appareil utilisé.\n3. **Évitez tout contact avec l'eau** près des prises.\n\nÉlectriciens agréés 24h/24 à **{city}**. Devons-nous envoyer un dépanneur ?",
-      spoken: "Bonjour, ici Tony. Pour votre sécurité, ne touchez à aucun fil dénudé et ne manipulez pas le disjoncteur les mains mouillées. Nos électriciens d'urgence à {city} interviendront en moins de vingt minutes pour rétablir le courant en toute sécurité."
+      spoken: "Bonjour, ici Noelia. Pour votre sécurité, ne touchez à aucun fil dénudé et ne manipulez pas le disjoncteur les mains mouillées. Nos électriciens d'urgence à {city} interviendront en moins de vingt minutes pour rétablir le courant en toute sécurité."
     },
     cerrajeria: {
       text: "🔑 **INSTRUCTIONS D'URGENCE SERRURERIE :**\n\n1. **Restez dans un endroit sûr** et visible en attendant le serrurier.\n2. **Ne forcez pas la serrure** avec une carte ou des objets métalliques pour éviter d'endommager le cylindre.\n3. **Préparez une pièce d'identité** prouvant votre accès au logement.\n\nSerruriers agréés à **{city}** pour ouvertures propres et remplacements en 15 min. On vous envoie un serrurier de garde ?",
-      spoken: "Je suis Tony. Si vous êtes coincé dehors ou si vous devez changer votre serrure en urgence, ne vous inquiétez pas. Nos serruriers de garde à {city} interviendront pour une ouverture propre, sans dégâts, en quinze minutes."
+      spoken: "Je suis Noelia. Si vous êtes coincé dehors ou si vous devez changer votre serrure en urgence, ne vous inquiétez pas. Nos serruriers de garde à {city} interviendront pour une ouverture propre, sans dégâts, en quinze minutes."
     },
     caldera: {
       text: "🔥 **VÉRIFICATIONS CHAUDIÈRE & CHAUFFAGE :**\n\n1. **Pression d'eau :** Le manomètre de la chaudière doit être entre **1,2 et 1,5 bar**.\n2. **Arrivée de gaz :** Assurez-vous que la vanne de gaz générale est ouverte.\n3. **Ne touchez pas aux conduits internes :** C'est extrêmement dangereux sans certification.\n\nTechniciens agréés toutes marques à **{city}**. Souhaitez-vous planifier une intervention immédiate ?",
-      spoken: "Bonjour, c'est Tony. Je vous conseille de vérifier si la pression d'eau est entre un point deux et un point cinq bar. Nos techniciens certifiés à {city} sont prêts à réparer votre chaudière immédiatement."
+      spoken: "Bonjour, c'est Noelia. Je vous conseille de vérifier si la pression d'eau est entre un point deux et un point cinq bar. Nos techniciens certifiés à {city} sont prêts à réparer votre chaudière immédiatement."
     },
     precio: {
       text: "📋 **CHARTE DES TARIFS TRANSPARENTS URGE YA :**\n\n• **Déplacement Gratuit :** Aucun frais de transport si la réparation est effectuée par notre technicien.\n• **Devis Écrit Ferme :** Le technicien évalue le problème sur place et vous donne un coût fixe garanti avant travaux.\n• **Tarifs Directs :** Pas d'intermédiaires ni de frais cachés.\n\nDécrivez-nous votre panne pour obtenir une estimation de tarif ?",
-      spoken: "C'est Tony. Le déplacement est entièrement gratuit si vous effectuez la réparation avec nous. De plus, le technicien vous remettra un devis écrit et fermé avant de commencer pour votre totale sérénité."
+      spoken: "C'est Noelia. Le déplacement est entièrement gratuit si vous effectuez la réparation avec nous. De plus, le technicien vous remettra un devis écrit et fermé avant de commencer pour votre totale sérénité."
     },
     urgencia: {
       text: "🚨 **COUVERTURE ET DÉLAIS D'INTERVENTION :**\n\n• **Zones couvertes :** Assistance rapide à **Barcelone**, **Madrid** et **Valence**.\n• **Délai d'arrivée :** Garanti en **15 à 25 minutes**.\n• **Opérationnel 24h/24, 7j/7 :** Nous travaillons les week-ends et jours fériés.\n\nSouhaitez-vous qu'un technicien vous rappelle en moins de 5 minutes ?",
-      spoken: "Bonjour, ici Tony. Nous couvrons Madrid, Barcelone et Valence. Notre délai d'intervention habituel est de quinze à vingt-cinq minutes, vingt-quatre heures sur vingt-quatre."
+      spoken: "Bonjour, ici Noelia. Nous couvrons Madrid, Barcelone et Valence. Notre délai d'intervention habituel est de quinze à vingt-cinq minutes, vingt-quatre heures sur vingt-quatre."
     }
   }
 };
@@ -472,7 +472,28 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
     return detected || currentLang;
   };
 
-  // Text-To-Speech function with natural, reassuring, male voice tuning per language
+  // MOTOR DE VOZ UTILIZADO: Web Speech API (window.speechSynthesis)
+  // Ubicación: /src/components/AIAssistant.tsx (alrededor de la línea 475)
+  // Text-To-Speech function with strict female voice selection for Spanish (es-ES)
+  const voicesRef = useRef<SpeechSynthesisVoice[]>([]);
+
+  // Proactively load and cache browser voices
+  useEffect(() => {
+    const updateVoices = () => {
+      if (window.speechSynthesis) {
+        const loaded = window.speechSynthesis.getVoices();
+        if (loaded && loaded.length > 0) {
+          voicesRef.current = loaded;
+        }
+      }
+    };
+
+    updateVoices();
+    if (window.speechSynthesis) {
+      window.speechSynthesis.onvoiceschanged = updateVoices;
+    }
+  }, []);
+
   const speakText = (text: string, overrideLang?: 'es' | 'en' | 'ca' | 'fr') => {
     if (isVoiceMuted) return;
     
@@ -490,10 +511,13 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
     const utterance = new SpeechSynthesisUtterance(cleanText);
     const targetLang = overrideLang || currentLang;
     
-    // Set language and find appropriate voice
-    const voices = window.speechSynthesis?.getVoices() || [];
+    // Get latest available voices from API or cache
+    let voices = window.speechSynthesis?.getVoices() || [];
+    if ((!voices || voices.length === 0) && voicesRef.current.length > 0) {
+      voices = voicesRef.current;
+    }
+    
     let targetLocale = 'es-ES';
-
     if (targetLang === 'en') {
       targetLocale = 'en-US';
     } else if (targetLang === 'ca') {
@@ -506,84 +530,86 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
 
     utterance.lang = targetLocale;
 
-    // Filter voices that match the exact target locale (e.g., es-ES, en-US) or general language code
-    const exactLocaleVoices = voices.filter(v => {
-      const vLang = v.lang.toLowerCase().replace('_', '-');
-      return vLang === targetLocale.toLowerCase();
-    });
+    let selectedVoice: SpeechSynthesisVoice | null = null;
 
-    const fallbackLangVoices = voices.filter(v => {
-      const vLang = v.lang.toLowerCase().replace('_', '-');
-      return vLang.startsWith(targetLang);
-    });
-
-    const candidateVoices = exactLocaleVoices.length > 0 ? exactLocaleVoices : fallbackLangVoices;
-
-    // Dynamically score candidate voices to find the most hyperrealistic and natural human one!
-    let bestVoice = null;
-    let highestScore = -1000;
-
-    candidateVoices.forEach(voice => {
-      let score = 0;
-      const nameLower = voice.name.toLowerCase();
-      const voiceLang = voice.lang.toLowerCase().replace('_', '-');
-
-      // 1. Exact locale match gets extra priority (ensure native Spain, US English, etc.)
-      if (voiceLang === targetLocale.toLowerCase()) {
-        score += 200;
-      }
-
-      // 2. Hyper-realism/Premium keywords (Chrome Online, Edge Neural/Online, Apple Siri/Enhanced)
-      // These sound highly natural, smooth, and human compared to basic robotic offline engines.
-      const premiumKeywords = ['natural', 'neural', 'online', 'google', 'siri', 'enhanced', 'premium', 'multilingual', 'high-quality', 'hi-fi', 'hifi', 'microsoft'];
-      premiumKeywords.forEach(keyword => {
-        if (nameLower.includes(keyword)) {
-          score += 150;
-        }
+    if (targetLang === 'es') {
+      // STRICT SPANISH FEMALE VOICE SELECTION (NOELIA)
+      // 1. Get all Spanish voices (es-ES, es_ES, or es-*)
+      const esVoices = voices.filter(v => {
+        const vLang = v.lang.toLowerCase().replace('_', '-');
+        return vLang.startsWith('es');
       });
 
-      // 3. Gender preference (Tony is male, so we prefer male natural/premium voices if available)
-      // If there's a premium/natural male voice, it gets the highest weight.
-      // If there's only a robotic male voice vs a premium female voice, the premium female voice wins (score +150 > score +40).
-      const maleIndicators = [
-        'male', 'hombre', 'home', 'homme', 'pablo', 'jorge', 'alvaro', 'julio', 'diego', 'manuel', 'david',
-        'daniel', 'james', 'mark', 'george', 'richard', 'pau', 'jordi', 'albert', 'paul', 'jean', 'pierre', 'nicolas'
-      ];
-      if (maleIndicators.some(indicator => nameLower.includes(indicator))) {
-        score += 40;
-      }
+      const maleNames = ['pablo', 'jorge', 'alvaro', 'julio', 'diego', 'manuel', 'david', 'daniel', 'raul', 'raúl', 'enrique', 'carlos', 'miguel', 'hombre', 'male'];
 
-      // Explicitly penalize old legacy voices known to sound extremely robotic or low quality
-      const lowQualityKeywords = ['classic', 'synthesizer', 'microsoft david', 'microsoft hazel', 'microsoft zira'];
-      lowQualityKeywords.forEach(keyword => {
-        if (nameLower.includes(keyword)) {
-          score -= 100;
-        }
+      // Filter out male voices for Spanish
+      const femaleOrNeutralEsVoices = esVoices.filter(v => {
+        const nameL = v.name.toLowerCase();
+        return !maleNames.some(m => nameL.includes(m));
       });
 
-      if (score > highestScore) {
-        highestScore = score;
-        bestVoice = voice;
+      const listToSearch = femaleOrNeutralEsVoices.length > 0 ? femaleOrNeutralEsVoices : esVoices;
+
+      // Priority 1: Top Microsoft Laura or Elvira Online / Natural (Windows/Edge)
+      selectedVoice = listToSearch.find(v => {
+        const n = v.name.toLowerCase();
+        return n.includes('laura') || n.includes('elvira') || n.includes('dalia');
+      }) || null;
+
+      // Priority 2: Google Español (Chrome / Android)
+      if (!selectedVoice) {
+        selectedVoice = listToSearch.find(v => {
+          const n = v.name.toLowerCase();
+          return n.includes('google') && (n.includes('español') || n.includes('espanol') || n.includes('spanish'));
+        }) || null;
       }
-    });
 
-    if (!bestVoice && candidateVoices.length > 0) {
-      bestVoice = candidateVoices[0];
-    }
-    if (!bestVoice && voices.length > 0) {
-      bestVoice = voices[0];
-    }
+      // Priority 3: Named Apple / iOS / macOS / System female voices (Monica, Marta, Lucia, Helena, Paloma, Carmen)
+      if (!selectedVoice) {
+        selectedVoice = listToSearch.find(v => {
+          const n = v.name.toLowerCase();
+          return ['monica', 'marta', 'lucia', 'lucía', 'helena', 'paloma', 'paulina', 'carmen', 'victoria', 'silvia', 'conchita', 'francisca', 'inma', 'maría', 'maria', 'soledad'].some(fname => n.includes(fname));
+        }) || null;
+      }
 
-    if (bestVoice) {
-      utterance.voice = bestVoice;
-      // Adjust speed for a very deliberate, comforting, reassuring and professional pace
-      const nameL = bestVoice.name.toLowerCase();
-      const isNeural = nameL.includes('natural') || nameL.includes('neural') || nameL.includes('online') || nameL.includes('siri') || nameL.includes('enhanced');
-      utterance.rate = isNeural ? 0.98 : 0.92;
-      utterance.pitch = targetLang === 'en' ? 0.95 : 1.0;
-    } else {
+      // Priority 4: Any voice marked as female / natural / neural / online
+      if (!selectedVoice) {
+        selectedVoice = listToSearch.find(v => {
+          const n = v.name.toLowerCase();
+          return n.includes('female') || n.includes('mujer') || n.includes('dona') || n.includes('natural') || n.includes('neural') || n.includes('online') || n.includes('enhanced');
+        }) || null;
+      }
+
+      // Priority 5: Any non-male Spanish voice
+      if (!selectedVoice && femaleOrNeutralEsVoices.length > 0) {
+        selectedVoice = femaleOrNeutralEsVoices[0];
+      }
+
+      // Priority 6: Fallback to any Spanish voice if nothing else matched
+      if (!selectedVoice && esVoices.length > 0) {
+        selectedVoice = esVoices[0];
+      }
+
+      // Voice tone for Noelia in Spanish: rate = 0.95 (deliberate & comforting), pitch = 1.08 (natural female tone)
       utterance.rate = 0.95;
-      utterance.pitch = 1.0;
+      utterance.pitch = 1.08;
+    } else {
+      // Other languages (en, ca, fr)
+      const exactLocaleVoices = voices.filter(v => v.lang.toLowerCase().replace('_', '-') === targetLocale.toLowerCase());
+      const fallbackVoices = voices.filter(v => v.lang.toLowerCase().replace('_', '-').startsWith(targetLang));
+      const candidates = exactLocaleVoices.length > 0 ? exactLocaleVoices : fallbackVoices;
+
+      selectedVoice = candidates.find(v => {
+        const n = v.name.toLowerCase();
+        return n.includes('female') || n.includes('natural') || n.includes('neural') || n.includes('online') || n.includes('siri') || n.includes('google');
+      }) || candidates[0] || voices[0] || null;
+
+      utterance.rate = 0.95;
+      utterance.pitch = 1.05;
+    }
+
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
     }
 
     utterance.volume = 1.0;
@@ -1409,7 +1435,7 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
                         {currentLang === 'en' ? "Image attached" : "Imagen adjunta"}
                       </p>
                       <p className="text-[9px] text-slate-500 truncate">
-                        {currentLang === 'en' ? "Ready for Gemini analysis" : "Lista para ser analizada por Tony"}
+                        {currentLang === 'en' ? "Ready for Gemini analysis" : "Lista para ser analizada por Noelia"}
                       </p>
                     </div>
                     <button
