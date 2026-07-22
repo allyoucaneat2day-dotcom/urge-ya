@@ -45,23 +45,23 @@ export default function ServiceExplorer({
         </div>
 
         {/* 6 Grid Tabs - Redesigned to fit the Sleek Interface style */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-8 sm:mb-10">
           {SERVICES.map((service) => {
             const isSelected = service.id === selectedServiceId;
             return (
               <button
                 key={service.id}
                 onClick={() => onServiceSelect(service.id)}
-                className={`flex flex-col items-center justify-center p-5 rounded-xl border transition-all text-center cursor-pointer ${
+                className={`flex flex-col items-center justify-center p-3 sm:p-5 rounded-xl border transition-all text-center cursor-pointer ${
                   isSelected
                     ? 'bg-white border-2 border-primary shadow-xl scale-[1.02]'
                     : 'bg-white border-slate-200 hover:border-secondary hover:bg-slate-50'
                 }`}
               >
-                <div className={`p-3 rounded-xl mb-3.5 transition-colors ${
+                <div className={`p-2.5 sm:p-3 rounded-xl mb-2 sm:mb-3.5 transition-colors ${
                   isSelected ? 'bg-primary text-white' : 'bg-slate-100 text-slate-500'
                 }`}>
-                  {getServiceIcon(service.iconName, 'w-6 h-6')}
+                  {getServiceIcon(service.iconName, 'w-5 h-5 sm:w-6 sm:h-6')}
                 </div>
                 <span className={`text-xs md:text-sm font-extrabold tracking-tight ${
                   isSelected ? 'text-primary' : 'text-slate-600'

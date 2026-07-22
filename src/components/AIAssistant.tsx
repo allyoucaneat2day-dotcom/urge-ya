@@ -2,9 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
   Sparkles, Send, X, Phone, Check, AlertCircle, RefreshCw, 
   ChevronRight, User, Mic, MicOff, Volume2, VolumeX, MapPin, 
-  Clock, Shield, Flame, Zap, Droplet, Key, Image 
+  Clock, Shield, Image, Camera, RotateCcw 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { SERVICES } from '../data';
 
 interface Message {
   id: string;
@@ -12,6 +13,7 @@ interface Message {
   text: string;
   timestamp: Date;
   isDispatchForm?: boolean;
+  usedModel?: string;
 }
 
 interface AIAssistantProps {
@@ -20,6 +22,7 @@ interface AIAssistantProps {
     phone: string;
     phoneFormatted: string;
   };
+  selectedServiceId?: string;
   onOpenBookingWizard: (serviceId?: string, issue?: string) => void;
 }
 
@@ -33,20 +36,20 @@ const LANGUAGES = [
 
 const WELCOME_MESSAGES = {
   es: {
-    text: `¡Hola! Soy **Noelia**, tu **asistente de Urge-Ya para emergencias del hogar** en **{city}**. 🤖🔊\n\nEstoy preparada para responderte por voz de forma inmediata y gestionar tu avería urgente.\n\n📸 **¡NUEVA FUNCIÓN DISPONIBLE!** Ahora puedes **subir una foto de tu avería** (tuberías rotas, llaves atascadas, cables quemados o fugas) pulsando el botón de la cámara para que la analice de inmediato con Inteligencia Artificial.\n\nOfrezco soporte en **castellano, inglés, catalán y francés**.\n\nCuéntame, ¿tienes alguna emergencia con **fugas de agua**, **apagones de luz**, **cerrajería de urgencia** o **fallos en tu caldera**? O elige un idioma en la barra superior.`,
-    spoken: `Hola, soy Noelia, tu asistente de Urge-Ya para emergencias del hogar en {city}. Puedes subir una foto de tu avería pulsando el botón de la cámara para que la analice con Inteligencia Artificial. Cuéntame qué emergencia tienes o selecciona tu idioma.`
+    text: `¡Hola! Soy **LUNA**, tu **asistente de Urge-Ya para emergencias del hogar** en **{city}**. 🤖🔊\n\nEstoy preparada para responderte por voz de forma inmediata y gestionar tu avería urgente.\n\n📸 **¡NUEVA FUNCIÓN DISPONIBLE!** Ahora puedes **subir una foto de tu avería** (tuberías rotas, llaves atascadas, cables quemados o fugas) pulsando el botón de la cámara para que la analice de inmediato con Inteligencia Artificial.\n\nOfrezco soporte en **castellano, inglés, catalán y francés**.\n\nCuéntame, ¿tienes alguna emergencia con **fugas de agua**, **apagones de luz**, **cerrajería de urgencia** o **fallos en tu caldera**? O elige un idioma en la barra superior.`,
+    spoken: `Hola, soy LUNA, tu asistente de Urge-Ya para emergencias del hogar en {city}. Puedes subir una foto de tu avería pulsando el botón de la cámara para que la analice con Inteligencia Artificial. Cuéntame qué emergencia tienes o selecciona tu idioma.`
   },
   en: {
-    text: `Hello! I am **Noelia**, your **AI Voice Assistant** from **Urge Ya** in **{city}**. 🤖🔊\n\nI am ready to speak and understand your language (English, Spanish, Catalan, or French).\n\n📸 **NEW FEATURE!** You can now **upload/snap a photo of your breakdown** (leaking pipe, burned wire, stuck door) using the camera button, and I will instantly analyze the image using Gemini AI.\n\nHow can I help you with your **plumbing**, **electrical**, **locksmith**, or **boiler** emergency today?`,
-    spoken: `Hello! I am Noelia, your voice assistant from Urge Ya in {city}. You can now upload a photo of your breakdown using the camera button for an instant artificial intelligence analysis. Please tell me what emergency you have.`
+    text: `Hello! I am **LUNA**, your **AI Voice Assistant** from **Urge Ya** in **{city}**. 🤖🔊\n\nI am ready to speak and understand your language (English, Spanish, Catalan, or French).\n\n📸 **NEW FEATURE!** You can now **upload/snap a photo of your breakdown** (leaking pipe, burned wire, stuck door) using the camera button, and I will instantly analyze the image using Gemini AI.\n\nHow can I help you with your **plumbing**, **electrical**, **locksmith**, or **boiler** emergency today?`,
+    spoken: `Hello! I am LUNA, your voice assistant from Urge Ya in {city}. You can now upload a photo of your breakdown using the camera button for an instant artificial intelligence analysis. Please tell me what emergency you have.`
   },
   ca: {
-    text: `Hola! Soc la **Noelia**, la seva **Assistent de Veu Intel·ligent** d'**Urge Ya** a **{city}**. 🤖🔊\n\nEstic preparada per respondre-li per veu en l'idioma que prefereixi (Català, Castellà, Anglès o Francès).\n\n📸 **NOVA FUNCIÓ!** Ara pot **pujar una foto de la seva avaria** (fuga d'aigua, pany trencat, cables cremats) prement el botó de la càmera perquè l'analitzi immediatament amb Intel·ligència Artificial.\n\nExpliqui'm, té alguna emergència amb **fuga d'aigua**, **tall de llum**, **serralleria** o **caldera**? O seleccioni un idioma a la barra de dalt.`,
-    spoken: `Hola, soc la Noelia, la seva assistenta de veu d'Urge Ya a {city}. Ara pot pujar una foto de la seva avaria prement el botó de la càmera perquè l'analitzi amb Intel·ligència Artificial. Expliqui'm quina avaria urgent té o seleccioni el seu idioma.`
+    text: `Hola! Soc la **LUNA**, la seva **Assistent de Veu Intel·ligent** d'**Urge Ya** a **{city}**. 🤖🔊\n\nEstic preparada per respondre-li per veu en l'idioma que prefereixi (Català, Castellà, Anglès o Francès).\n\n📸 **NOVA FUNCIÓ!** Ara pot **pujar una foto de la seva avaria** (fuga d'aigua, pany trencat, cables cremats) prement el botó de la càmera perquè l'analitzi immediatament amb Intel·ligència Artificial.\n\nExpliqui'm, té alguna emergència amb **fuga d'aigua**, **tall de llum**, **serralleria** o **caldera**? O seleccioni un idioma a la barra de dalt.`,
+    spoken: `Hola, soc la LUNA, la seva assistenta de veu d'Urge Ya a {city}. Ara pot pujar una foto de la seva avaria prement el botó de la càmera perquè l'analitzi amb Intel·ligència Artificial. Expliqui'm quina avaria urgent té o seleccioni el seu idioma.`
   },
   fr: {
-    text: `Bonjour ! Je suis **Noelia**, votre **Assistant Vocal Intelligent** d'**Urge Ya** à **{city}**. 🤖🔊\n\nJe suis prête à vous répondre par voix dans votre langue préférée (Français, Espagnol, Anglais ou Catalan).\n\n📸 **NOUVEAU !** Vous pouvez maintenant **télécharger/prendre une photo de votre panne** (fuite, court-circuit, serrure bloquée) en cliquant sur le bouton de l'appareil photo, et je l'analyserai instantanément grâce à l'IA.\n\nQuelle est votre urgence aujourd'hui (fuite d'eau, panne de courant, serrurerie ou chaudière) ? Vous pouvez aussi choisir une langue ci-dessus.`,
-    spoken: `Bonjour, je suis Noelia, votre assistante vocale d'Urge Ya à {city}. Vous pouvez maintenant charger une photo de votre panne avec l'appareil photo pour une analyse par intelligence artificielle. Dites-moi quel est votre problème.`
+    text: `Bonjour ! Je suis **LUNA**, votre **Assistant Vocal Intelligent** d'**Urge Ya** à **{city}**. 🤖🔊\n\nJe suis prête à vous répondre par voix dans votre langue préférée (Français, Espagnol, Anglais ou Catalan).\n\n📸 **NOUVEAU !** Vous pouvez maintenant **télécharger/prendre une photo de votre panne** (fuite, court-circuit, serrure bloquée) en cliquant sur le bouton de l'appareil photo, et je l'analyserai instantanément grâce à l'IA.\n\nQuelle est votre urgence aujourd'hui (fuite d'eau, panne de courant, serrurerie ou chaudière) ? Vous pouvez aussi choisir une langue ci-dessus.`,
+    spoken: `Bonjour, je suis LUNA, votre assistante vocale d'Urge Ya à {city}. Vous pouvez maintenant charger une photo de votre panne avec l'appareil photo pour une analyse par intelligence artificielle. Dites-moi quel est votre problème.`
   }
 };
 
@@ -60,9 +63,10 @@ const UI_LABELS = {
     btnUploadPhoto: "📸 Analizar Foto (IA)",
     inputPlaceholder: "Hable o escriba su avería...",
     btnCall: "Llamar",
-    btnDispatch: "Despacho Urgente",
+    btnDispatch: "⚡ Pedir Técnico 24h",
+    btnWhatsApp: "💬 WhatsApp 24h",
     btnExit: "Volver a la Web / Cerrar Asistente",
-    dispatchTitle: "Despacho Inmediato de Técnico",
+    dispatchTitle: "PROTOCOLO DE DESPACHO URGENTE",
     labelName: "Nombre Completo",
     labelPhone: "Móvil de Contacto",
     labelType: "Tipo de Avería",
@@ -71,7 +75,7 @@ const UI_LABELS = {
     optElectric: "⚡ Electricidad",
     optLocksmith: "🔑 Cerrajería",
     optBoiler: "🔥 Calderas / Gas",
-    btnSubmitDispatch: "Despachar Técnico Urgente 24h",
+    btnSubmitDispatch: "⚡ SOLICITAR Y DESPACHAR TÉCNICO YA",
     successTitle: "¡TÉCNICO DE GUARDIA DESPACHADO!",
     successText: "El protocolo de asistencia urgente se ha iniciado para",
     lblDestiny: "Destino:",
@@ -82,12 +86,12 @@ const UI_LABELS = {
     btnCloseTicket: "Cerrar Ticket",
     processingVoice: "Procesando mensaje de voz",
     dictateTitle: "Dictar por Voz (Hablar)",
-    speakWelBtn: "Noelia - Gestor de Voz",
+    speakWelBtn: "LUNA - Gestor de Voz",
     headerSubtitle: "Asistencia Técnica de Urgencia 24h",
     muteVoice: "Mutear Asistencia de Voz",
     unmuteVoice: "Desmutear Asistencia de Voz",
     close: "Cerrar",
-    floatBtnText: "Asistente de Voz"
+    floatBtnText: "Asistente de Voz LUNA"
   },
   en: {
     quickTitle: "Inquire by Voice Emergency:",
@@ -98,9 +102,10 @@ const UI_LABELS = {
     btnUploadPhoto: "📸 Analyze Photo (AI)",
     inputPlaceholder: "Speak or type your issue...",
     btnCall: "Call",
-    btnDispatch: "Urgent Dispatch",
+    btnDispatch: "⚡ Request Tech 24h",
+    btnWhatsApp: "💬 WhatsApp 24h",
     btnExit: "Return to Web / Close Assistant",
-    dispatchTitle: "Immediate Technician Dispatch",
+    dispatchTitle: "URGENT DISPATCH PROTOCOL",
     labelName: "Full Name",
     labelPhone: "Contact Phone",
     labelType: "Emergency Type",
@@ -109,7 +114,7 @@ const UI_LABELS = {
     optElectric: "⚡ Electricity",
     optLocksmith: "🔑 Locksmith",
     optBoiler: "🔥 Boiler / Gas",
-    btnSubmitDispatch: "Dispatch Urgent Technician 24h",
+    btnSubmitDispatch: "⚡ DISPATCH URGENT TECHNICIAN NOW",
     successTitle: "DUTY TECHNICIAN DISPATCHED!",
     successText: "The urgent assistance protocol has been activated for",
     lblDestiny: "Destination:",
@@ -120,12 +125,12 @@ const UI_LABELS = {
     btnCloseTicket: "Close Ticket",
     processingVoice: "Processing voice input",
     dictateTitle: "Dictate by Voice (Speak)",
-    speakWelBtn: "Noelia - Voice Manager",
+    speakWelBtn: "LUNA - Voice Manager",
     headerSubtitle: "24/7 Urgent Technical Assistance",
     muteVoice: "Mute Voice Assistance",
     unmuteVoice: "Unmute Voice Assistance",
     close: "Close",
-    floatBtnText: "Voice Assistant"
+    floatBtnText: "LUNA Voice Assistant"
   },
   ca: {
     quickTitle: "Consultar Emergència de Veu:",
@@ -136,9 +141,10 @@ const UI_LABELS = {
     btnUploadPhoto: "📸 Analitzar Foto (IA)",
     inputPlaceholder: "Parli o escrigui la seva avaria...",
     btnCall: "Trucar",
-    btnDispatch: "Enviament Urgent",
+    btnDispatch: "⚡ Demanar Tècnic 24h",
+    btnWhatsApp: "💬 WhatsApp 24h",
     btnExit: "Tornar a la Web / Tancar Assistent",
-    dispatchTitle: "Enviament Immediat de Tècnic",
+    dispatchTitle: "PROTOCOL DE DESPATX URGENT",
     labelName: "Nom Complet",
     labelPhone: "Mòbil de Contacte",
     labelType: "Tipus d'Avaria",
@@ -147,7 +153,7 @@ const UI_LABELS = {
     optElectric: "⚡ Electricitat",
     optLocksmith: "🔑 Serralleria",
     optBoiler: "🔥 Calderes / Gas",
-    btnSubmitDispatch: "Enviar Tècnic Urgent 24h",
+    btnSubmitDispatch: "⚡ SOL·LICITAR TÈCNIC URGENT JA",
     successTitle: "TÈCNIC DE GUÀRDIA ENVIAT!",
     successText: "El protocol d'assistència urgent s'ha iniciat per a",
     lblDestiny: "Destí:",
@@ -158,12 +164,12 @@ const UI_LABELS = {
     btnCloseTicket: "Tancar Ticket",
     processingVoice: "Processant missatge de veu",
     dictateTitle: "Dictar per Veu (Parlar)",
-    speakWelBtn: "Noelia - Gestor de Veu",
+    speakWelBtn: "LUNA - Gestor de Veu",
     headerSubtitle: "Assistència Tècnica d'Urgència 24h",
     muteVoice: "Silenciar Assistència de Veu",
     unmuteVoice: "Activar Assistència de Veu",
     close: "Tancar",
-    floatBtnText: "Assistent de Veu"
+    floatBtnText: "Assistent de Veu LUNA"
   },
   fr: {
     quickTitle: "Consulter l'Urgence par Voix :",
@@ -174,9 +180,10 @@ const UI_LABELS = {
     btnUploadPhoto: "📸 Analyser Photo (IA)",
     inputPlaceholder: "Parlez ou tapez votre problème...",
     btnCall: "Appeler",
-    btnDispatch: "Dépannage Urgent",
+    btnDispatch: "⚡ Demander Technicien 24h",
+    btnWhatsApp: "💬 WhatsApp 24h",
     btnExit: "Retour au Site / Fermer l'Assistant",
-    dispatchTitle: "Déploiement Immédiat du Technicien",
+    dispatchTitle: "PROTOCOLE D'INTERVENTION URGENTE",
     labelName: "Nom Complet",
     labelPhone: "Téléphone Mobile",
     labelType: "Type de Panne",
@@ -185,7 +192,7 @@ const UI_LABELS = {
     optElectric: "⚡ Électricité",
     optLocksmith: "🔑 Serrurerie",
     optBoiler: "🔥 Chaudière / Gaz",
-    btnSubmitDispatch: "Dépêcher un Technicien Urgent 24h",
+    btnSubmitDispatch: "⚡ DÉPÊCHER TECHNICIEN D'URGENCE",
     successTitle: "TECHNICIEN DE GARDE DÉPÊCHÉ !",
     successText: "Le protocole d'assistance d'urgence a été activé pour",
     lblDestiny: "Destination :",
@@ -196,123 +203,125 @@ const UI_LABELS = {
     btnCloseTicket: "Fermer le Ticket",
     processingVoice: "Traitement de la voix en cours",
     dictateTitle: "Dicter par Voix (Parler)",
-    speakWelBtn: "Noelia - Gestionnaire Vocal",
+    speakWelBtn: "LUNA - Gestionnaire Vocal",
     headerSubtitle: "Assistance Technique d'Urgence 24h/24",
     muteVoice: "Couper l'assistance vocale",
     unmuteVoice: "Activar l'assistance vocale",
     close: "Fermer",
-    floatBtnText: "Assistant Vocal"
+    floatBtnText: "Assistant Vocal LUNA"
   }
 };
 
 const MULTILINGUAL_RESPONSES: Record<string, Record<string, { text: string; spoken: string }>> = {
   es: {
     fuga: {
-      text: "🚨 **¡ALERTA DE FONTANERÍA! INSTRUCCIONES DE EMERGENCIA:**\n\n1. **Cierre de inmediato la llave de paso general** de su hogar para detener la inundación.\n2. **Corte el suministro eléctrico** en las zonas afectadas para evitar un cortocircuito.\n3. **Recoja el agua estancada** y resguarde sus pertenencias.\n\nTenemos fontaneros urgentes homologados en **{city}** listos para salir ya. El tiempo medio de llegada es de **15 a 20 minutos**. ¿Facilitamos el envío de un técnico inmediato?",
-      spoken: "Hola, soy Noelia. Por favor, mantenga la calma. Le recomiendo cerrar de inmediato la llave de paso principal de su vivienda para detener la inundación, y desconectar la electricidad si el agua se extiende. Nuestros fontaneros en {city} están disponibles de inmediato. Llegaremos en menos de veinte minutos."
+      text: "🔍 **1. Diagnóstico rápido:**\nParece tratarse de un fallo o fuga activa en la instalación de fontanería o tuberías.\n\n🚨 **2. Acción de emergencia:**\n**Cierre de inmediato la llave de paso general de agua** de su hogar para detener la inundación.\n\n🛠️ **3. Solución / Pasos a seguir:**\nNuestros fontaneros urgentes en **{city}** pueden llegar en **15 a 20 minutos**. ¿Nos confirma su dirección para enviar a un operario de inmediato?",
+      spoken: "Hola, soy LUNA. Le recomiendo cerrar de inmediato la llave de paso principal de su vivienda para detener la inundación. Nuestros fontaneros en {city} llegarán en menos de veinte minutos. ¿Confirmamos el envío?"
     },
     apagón: {
-      text: "⚡ **¡ALERTA DE ELECTRICIDAD! INSTRUCCIONES DE EMERGENCIA:**\n\n1. **No manipule cables expuestos** ni toque el cuadro eléctrico con las manos húmedas.\n2. **Verifique el interruptor diferencial:** Si ha saltado, intente rearmarlo una vez desenchufado el último electrodoméstico.\n3. **Evite el contacto directo con agua** en áreas con enchufes inundados.\n\nDisponemos de electricistas autorizados de guardia 24 horas en **{city}**. ¿Le enviamos un técnico homologado de urgencia?",
-      spoken: "Hola, le saluda Noelia. Por favor, por su seguridad, no toque ningún cable expuesto ni manipule el cuadro eléctrico con las manos húmedas. Si se ha producido un cortocircuito o un apagón general, nuestros electricistas de guardia en {city} llegarán en menos de veinte minutos para restablecer su servicio de forma totalmente segura."
+      text: "🔍 **1. Diagnóstico rápido:**\nAvería eléctrica o cortocircuito detectado en el cuadro de luz o en la instalación.\n\n🚨 **2. Acción de emergencia:**\n**Baja el diferencial principal inmediatamente** y no toques ningún cable expuesto ni con las manos húmedas.\n\n🛠️ **3. Solución / Pasos a seguir:**\nContamos con electricistas de guardia en **{city}** listos para acudir en **15 a 25 minutos**. ¿Le despachamos un técnico de urgencia?",
+      spoken: "Hola, le saluda LUNA. Por su seguridad, baje el diferencial principal y no toque cables expuestos. Nuestros electricistas en {city} llegarán en menos de veinte minutos."
     },
     cerrajeria: {
-      text: "🔑 **¡URGENCIA DE CERRAJERÍA! INSTRUCCIONES DE SEGURIDAD:**\n\n1. **Manténgase en una zona segura** y visible mientras espera al técnico.\n2. **No intente forzar la cerradura** con tarjetas u objetos metálicos; podría dañar el mecanismo interno.\n3. **Prepare un documento de identidad** que confirme su acceso a la vivienda.\n\nNuestros cerrajeros autorizados de **{city}** realizan aperturas limpias de puertas y cambios de bombines urgentes en 15 minutos. ¿Enviamos un cerrajero de guardia?",
-      spoken: "Soy Noelia. Si se ha quedado fuera de casa, ha perdido las llaves o necesita cambiar su cerradura por motivos de seguridad, no se preocupe. Contamos con cerrajeros autorizados en {city} de guardia constante. Realizaremos una apertura limpia, sin ningún tipo de daños, en unos quince minutos."
+      text: "🔍 **1. Diagnóstico rápido:**\nBloqueo de cerradura, llaves extraviadas o puerta atrancada que impide el acceso seguro.\n\n🚨 **2. Acción de emergencia:**\n**Manténgase en un lugar seguro** y no intente forzar la cerradura con objetos metálicos para evitar romper el bombín.\n\n🛠️ **3. Solución / Pasos a seguir:**\nUn cerrajero homologado de **{city}** llegará a su domicilio en **15 a 20 minutos** para realizar una apertura limpia. ¿Enviamos un operario ahora?",
+      spoken: "Soy LUNA. No intente forzar la cerradura. Contamos con cerrajeros de guardia en {city} que realizarán una apertura limpia en quince a veinte minutos."
     },
     caldera: {
-      text: "🔥 **¡AVISO DE CALDERAS Y CALEFACCIÓN! COMPROBACIONES RÁPIDAS:**\n\n1. **Verifique la presión del agua:** El manómetro de la caldera debe marcar entre **1.2 y 1.5 bar**.\n2. **Compruebe el suministro de gas:** Asegúrese de que la llave general de paso está abierta.\n3. **Evite manipular conductos internos:** Es extremadamente peligroso si no es un técnico autorizado.\n\nNuestros técnicos de gas en **{city}** reparan todas las marcas (Vaillant, Junkers, Saunier Duval). ¿Desea agendar asistencia inmediata?",
-      spoken: "Hola, soy Noelia. Le sugiero comprobar si el manómetro de agua está entre uno con dos y uno con cinco bar. Asegúrese también de que la llave de gas esté completamente abierta. Nuestros técnicos certificados en {city} están totalmente preparados para acudir y solucionar el fallo de inmediato."
+      text: "🔍 **1. Diagnóstico rápido:**\nFallo de presión, bloqueo de encendido o pérdida de agua en caldera/termo eléctrico.\n\n🚨 **2. Acción de emergencia:**\n**Compruebe si la presión está entre 1.2 y 1.5 bar** y no intente manipular tubos o conductos de gas internos.\n\n🛠️ **3. Solución / Pasos a seguir:**\nNuestros técnicos certificados en **{city}** pueden acudir en **20 a 30 minutos** para solucionar la avería. ¿Le enviamos un técnico?",
+      spoken: "Hola, soy LUNA. Compruebe si la presión de la caldera está entre 1.2 y 1.5 bar. Nuestros técnicos certificados en {city} llegarán en veinte a treinta minutos."
     },
+
     precio: {
-      text: "📋 **POLÍTICA DE TARIFAS TRANSPARENTES DE URGE YA:**\n\n• **Desplazamiento 100% Gratuito:** No cobramos costes de viaje si se aprueba y realiza la reparación técnica.\n• **Presupuestos Cerrados por Escrito:** El técnico evalúa la avería en persona y le da un coste fijo garantizado antes de trabajar.\n• **Tarifas Directas:** Sin intermediarios ni costes ocultos.\n\n¿Quiere indicarnos qué avería tiene para orientarle mejor en el precio?",
-      spoken: "Soy Noelia. Le confirmo que el desplazamiento es completamente gratuito si realiza la reparación con nosotros. Además, el técnico le facilitará un presupuesto cerrado por escrito antes de comenzar a trabajar para su total tranquilidad."
+      text: "📋 **POLÍTICA DE TARIFAS TRANSPARENTS DE URGE YA:**\n\n• **Desplazamiento 100% Gratuito:** No cobramos costes de viaje si se aprueba y realiza la reparación técnica.\n• **Presupuestos Cerrados por Escrito:** El técnico evalúa la avería en persona y le da un coste fijo garantizado antes de trabajar.\n• **Tarifas Directas:** Sin intermediarios ni costes ocultos.\n\n¿Quiere indicarnos qué avería tiene para orientarle mejor en el precio?",
+      spoken: "Soy LUNA. Le confirmo que el desplazamiento es completamente gratuito si realiza la reparación con nosotros. Además, el técnico le facilitará un presupuesto cerrado por escrito antes de comenzar a trabajar para su total tranquilidad."
     },
     urgencia: {
       text: "🚨 **COBERTURA Y TIEMPOS DE RESPUESTA INMEDIATA:**\n\n• **Zonas de Cobertura:** Ofrecemos asistencia domiciliaria en todas las áreas de **Barcelona**, **Madrid** y **Valencia**.\n• **Tiempo de Llegada:** La media oscila entre **15 y 25 minutos** de forma garantizada.\n• **Operativos 24/7/365:** Trabajamos fines de semana y festivos de manera ininterrumpida.\n\n¿Desea que un técnico le llame directamente en menos de 5 minutos?",
-      spoken: "Hola, le saluda Noelia. Ofrecemos cobertura completa de urgencia en Madrid, Barcelona y Valencia. Nuestro tiempo de respuesta habitual es de quince a veinticinco minutos las veinticuatro horas del día. Estamos listos para salir de inmediato hacia su domicilio."
+      spoken: "Hola, le saluda LUNA. Ofrecemos cobertura completa de urgencia en Madrid, Barcelona y Valencia. Nuestro tiempo de respuesta habitual es de quince a veinticinco minutos las veinticuatro horas del día. Estamos listos para salir de inmediato hacia su domicilio."
     }
   },
   en: {
     fuga: {
       text: "🚨 **PLUMBING EMERGENCY INSTRUCTIONS:**\n\n1. **Close the main water valve** immediately to stop the flooding.\n2. **Turn off electricity** in the affected areas to prevent short circuits.\n3. **Collect standing water** and protect your belongings.\n\nWe have certified emergency plumbers in **{city}** ready to go. Average arrival time is **15 to 20 minutes**. Should we dispatch a technician right away?",
-      spoken: "Hello, this is Noelia. Please remain calm. I highly recommend closing your main water valve immediately to stop the leak. Our emergency plumbers in {city} are ready. We will arrive in less than twenty minutes."
+      spoken: "Hello, this is LUNA. Please remain calm. I highly recommend closing your main water valve immediately to stop the leak. Our emergency plumbers in {city} are ready. We will arrive in less than twenty minutes."
     },
     apagón: {
       text: "⚡ **ELECTRICAL EMERGENCY INSTRUCTIONS:**\n\n1. **Do not touch exposed wires** or handle the fuse box with wet hands.\n2. **Check the circuit breaker:** If it tripped, try resetting it after unplugging the last used appliance.\n3. **Avoid water contact** near flooded outlets.\n\nWe have licensed 24/7 electricians on duty in **{city}**. Shall we send an authorized technician now?",
-      spoken: "Hello, Noelia here. For your safety, do not touch any exposed wires or handle the electrical panel with wet hands. If you have a short circuit or a blackout, our duty electricians in {city} will arrive in less than twenty minutes to safely restore your power."
+      spoken: "Hello, LUNA here. For your safety, do not touch any exposed wires or handle the electrical panel with wet hands. If you have a short circuit or a blackout, our duty electricians in {city} will arrive in less than twenty minutes to safely restore your power."
     },
     cerrajeria: {
       text: "🔑 **LOCKSMITH EMERGENCY INSTRUCTIONS:**\n\n1. **Stay in a safe**, visible area while waiting.\n2. **Do not force the lock** with cards or metal objects; it could damage the internal mechanism.\n3. **Prepare an ID** confirming your access to the property.\n\nOur certified locksmiths in **{city}** perform clean door openings and lock replacements in 15 minutes. Should we dispatch one now?",
-      spoken: "I am Noelia. If you are locked out, lost your keys, or need an urgent lock replacement, don't worry. We have on-duty locksmiths in {city} ready. We will open your door cleanly, without any damage, in fifteen to twenty minutes."
+      spoken: "I am LUNA. If you are locked out, lost your keys, or need an urgent lock replacement, don't worry. We have on-duty locksmiths in {city} ready. We will open your door cleanly, without any damage, in fifteen to twenty minutes."
     },
     caldera: {
       text: "🔥 **BOILER & HEATING QUICK CHECKS:**\n\n1. **Check water pressure:** The boiler gauge should be between **1.2 and 1.5 bar**.\n2. **Check gas supply:** Make sure the main gas valve is open.\n3. **Do not manipulate internal parts:** It is extremely dangerous without certified training.\n\nOur gas technicians in **{city}** repair all brands (Vaillant, Junkers, Saunier Duval). Would you like to schedule immediate service?",
-      spoken: "Hello, Noelia speaking. I suggest checking if your water pressure gauge is between 1.2 and 1.5 bar. Also, ensure the gas valve is fully open. Our certified boiler technicians in {city} are fully ready to help you immediately."
+      spoken: "Hello, LUNA speaking. I suggest checking if your water pressure gauge is between 1.2 and 1.5 bar. Also, ensure the gas valve is fully open. Our certified boiler technicians in {city} are fully ready to help you immediately."
     },
     precio: {
       text: "📋 **URGE YA TRANSPARENT PRICING POLICY:**\n\n• **100% Free Dispatch:** We don't charge travel fees if the repair work is approved and completed.\n• **Written Fixed Estimates:** The technician inspects the issue in person and gives a guaranteed fixed cost before starting.\n• **Direct Rates:** No intermediaries or hidden fees.\n\nWould you like to describe your issue so we can guide you on the cost?",
-      spoken: "This is Noelia. I confirm that dispatch and travel are completely free if you proceed with the repair. Additionally, the technician will provide a fixed estimate in writing before starting any work for your peace of mind."
+      spoken: "This is LUNA. I confirm that dispatch and travel are completely free if you proceed with the repair. Additionally, the technician will provide a fixed estimate in writing before starting any work for your peace of mind."
     },
     urgencia: {
       text: "🚨 **COVERAGE AND IMMEDIATE RESPONSE TIMES:**\n\n• **Coverage Areas:** We provide home assistance throughout **Barcelona**, **Madrid**, and **Valencia**.\n• **Arrival Time:** Guaranteed response time of **15 to 25 minutes**.\n• **24/7/365 Operations:** We work non-stop during weekends and holidays.\n\nWould you like a technician to call you directly in less than 5 minutes?",
-      spoken: "Hello, Noelia here. We offer full emergency coverage in Madrid, Barcelona, and Valencia. Our response time is fifteen to twenty-five minutes, twenty-four hours a day. We are ready to head to your address immediately."
+      spoken: "Hello, LUNA here. We offer full emergency coverage in Madrid, Barcelona, and Valencia. Our response time is fifteen to twenty-five minutes, twenty-four hours a day. We are ready to head to your address immediately."
     }
   },
   ca: {
     fuga: {
       text: "🚨 **ALERTA DE FONTANERIA! INSTRUCCIONS D'EMERGÈNCIA:**\n\n1. **Tanqui immediatament la clau de pas general** per aturar la inundació.\n2. **Talli el subministrament elèctric** a les zones afectades per evitar curtcircuits.\n3. **Reculli l'aigua** i protegeixi els seus béns.\n\nTenim fontaners urgents homologats a **{city}** llestos per sortir. Temps d'arribada: **15-20 minuts**. Enviem un tècnic immediat?",
-      spoken: "Hola, soc la Noelia. Per favor, mantingui la calma. Li recomano tancar immediatament la clau de pas general de casa seva per aturar la inundació, i desconnectar l'electricitat si l'aigua s'estén. Els nostres fontaners a {city} estan disponibles. Arribarem en menys de vint minuts."
+      spoken: "Hola, soc la LUNA. Per favor, mantingui la calma. Li recomano tancar immediatament la clau de pas general de casa seva per aturar la inundació, i desconnectar l'electricitat si l'aigua s'estén. Els nostres fontaners a {city} estan disponibles. Arribarem en menys de vint minuts."
     },
     apagón: {
       text: "⚡ **ALERTA D'ELECTRICITAT! INSTRUCCIONS D'EMERGÈNCIA:**\n\n1. **No toqui cables exposats** ni el quadre elèctric amb les mans humides.\n2. **Verifiqui el diferencial:** Si ha saltat, intenti rearmar-lo un cop desendollat l'últim aparell.\n3. **Eviti el contacte amb l'aigua** prop d'endolls inundats.\n\nElectricistes autoritzats de guàrdia 24h a **{city}**. Enviem un tècnic urgent?",
-      spoken: "Hola, soc la Noelia. Per la seva seguretat, no toqui cap cable exposat ni el quadre elèctric amb les mans humides. Si té un curtcircuit o una apagada general, els nostres electricistes a {city} arribaran en menys de vint minuts per restablir el servei amb total seguretat."
+      spoken: "Hola, soc la LUNA. Per la seva seguretat, no toqui cap cable exposat ni el quadre elèctric amb les mans humides. Si té un curtcircuit o una apagada general, els nostres electricistes a {city} arribaran en menys de vint minuts per restablir el servei amb total seguretat."
     },
     cerrajeria: {
       text: "🔑 **URGÈNCIA DE SERRALLERIA! INSTRUCCIONS DE SEGURIDAD:**\n\n1. **Estigui en una zona segura** i visible mentre espera el serraller.\n2. **No versi o forci la fusta o pany** amb targetes per no danyar el mecanisme.\n3. **Prepari un document d'identitat** que confirmi l'accés a l'habitatge.\n\nSerrallers autoritzats a **{city}** obren portes i canvien bombins en 15 minuts. Enviem un serraller de guàrdia?",
-      spoken: "Soc la Noelia. Si s'ha quedat fora de casa, ha perdut les claus o necessita un canvi urgent de pany per seguretat, no es preocupi. Tenim serrallers a {city} de guàrdia. Realitzarem una obertura neta en uns quinze minuts."
+      spoken: "Soc la LUNA. Si s'ha quedat fora de casa, ha perdut les claus o necessita un canvi urgent de pany per seguretat, no es preocupi. Tenim serrallers a {city} de guàrdia. Realitzarem una obertura neta en uns quinze minuts."
     },
     caldera: {
       text: "🔥 **AVÍS DE CALDERES I CALEFACCIÓ! COMPROBACIONS RÀPIDES:**\n\n1. **Pressió de l'aigua:** El manòmetre de la caldera ha d'estar entre **1.2 i 1.5 bar**.\n2. **Subministrament de gas:** Comprovi que la clau de pas està oberta.\n3. **No manipuli tubs interns**: És molt perillós si no s'és tècnic homologat.\n\nTècnics de gas de guàrdia a **{city}**. Vol agendar assistència immediata?",
-      spoken: "Hola, soc la Noelia. Li suggereixo comprovar si la pressió d'aigua de la caldera està entre un punt dos i un punt cinc bar. Els nostres tècnics homologats a {city} estan preparats per venir i solucionar el problema de forma immediata."
+      spoken: "Hola, soc la LUNA. Li suggereixo comprovar si la pressió d'aigua de la caldera està entre un punt dos i un punt cinc bar. Els nostres tècnics homologats a {city} estan preparats per venir i solucionar el problema de forma immediata."
     },
     precio: {
       text: "📋 **POLÍTICA DE PREUS TRANSPARENTS D'URGE YA:**\n\n• **Desplaçament Gratuït:** Sense despeses de viatge si es realitza la reparació amb nosaltres.\n• **Pressupostos Tancats per Escrit:** El tècnic avalua l'avaria i dóna un cost tancat abans de començar.\n• **Tarifes Directes:** Sense sorpreses ni intermediaris.\n\nEns indica quina avaria té per donar-li un preu orientatiu?",
-      spoken: "Soc la Noelia. El desplaçament és completament gratuït si realitza la reparació con nosotros. A més, el tècnic li farà un pressupost tancat per escrit abans de començar a treballar per a la seva tranquil·litat."
+      spoken: "Soc la LUNA. El desplaçament és completament gratuït si realitza la reparació con nosotros. A més, el tècnic li farà un pressupost tancat per escrit abans de començar a treballar per a la seva tranquil·litat."
     },
     urgencia: {
       text: "🚨 **COBERTURA I TEMPS DE RESPOSTA IMMEDIATA:**\n\n• **Cobertura:** Assistència a tot **Barcelona**, **Madrid** i **València**.\n• **Temps d'Arribada:** Entre **15 i 25 minuts** garantits.\n• **Guàrdia 24h/365:** Treballem dissabtes, diumenges i festius de forma ininterrompuda.\n\nVol que un tècnic li truqui en menys de 5 minuts?",
-      spoken: "Hola, soc la Noelia. Oferim cobertura de guàrdia a Madrid, Barcelona i València. Arribem habitualment en un termini de quinze a vint-i-cinc minuts, les vint-i-quatre hores del dia."
+      spoken: "Hola, soc la LUNA. Oferim cobertura de guàrdia a Madrid, Barcelona i València. Arribem habitualment en un termini de quinze a vint-i-cinc minuts, les vint-i-quatre hores del dia."
     }
   },
   fr: {
     fuga: {
       text: "🚨 **INSTRUCTIONS D'URGENCE PLOMBERIE :**\n\n1. **Fermez immédiatement la vanne d'arrivée d'eau** générale pour stopper l'inondation.\n2. **Coupez l'électricité** dans les zones touchées pour éviter les courts-circuits.\n3. **Épongez l'eau stagnante** et mettez vos biens à l'abri.\n\nNos plombiers certifiés à **{city}** sont prêts à intervenir. Délai moyen : **15 à 20 minutes**. Devons-nous envoyer un technicien ?",
-      spoken: "Bonjour, c'est Noelia. Gardez votre calme. Je vous conseille de fermer immédiatement la vanne d'eau générale. Nos plombiers à {city} sont prêts à partir et arriveront en moins de vingt minutes."
+      spoken: "Bonjour, c'est LUNA. Gardez votre calme. Je vous conseille de fermer immédiatement la vanne d'eau générale. Nos plombiers à {city} sont prêts à partir et arriveront en moins de vingt minutes."
     },
     apagón: {
       text: "⚡ **INSTRUCTIONS D'URGENCE ÉLECTRICITÉ :**\n\n1. **Ne touchez pas aux fils dénudés** et ne manipulez pas le tableau électrique les mains humides.\n2. **Vérifiez le disjoncteur :** S'il a sauté, essayez de le réarmer après avoir débranché le dernier appareil utilisé.\n3. **Évitez tout contact avec l'eau** près des prises.\n\nÉlectriciens agréés 24h/24 à **{city}**. Devons-nous envoyer un dépanneur ?",
-      spoken: "Bonjour, ici Noelia. Pour votre sécurité, ne touchez à aucun fil dénudé et ne manipulez pas le disjoncteur les mains mouillées. Nos électriciens d'urgence à {city} interviendront en moins de vingt minutes pour rétablir le courant en toute sécurité."
+      spoken: "Bonjour, ici LUNA. Pour votre sécurité, ne touchez à aucun fil dénudé et ne manipulez pas le disjoncteur les mains mouillées. Nos électriciens d'urgence à {city} interviendront en moins de vingt minutes pour rétablir le courant en toute sécurité."
     },
     cerrajeria: {
       text: "🔑 **INSTRUCTIONS D'URGENCE SERRURERIE :**\n\n1. **Restez dans un endroit sûr** et visible en attendant le serrurier.\n2. **Ne forcez pas la serrure** avec une carte ou des objets métalliques pour éviter d'endommager le cylindre.\n3. **Préparez une pièce d'identité** prouvant votre accès au logement.\n\nSerruriers agréés à **{city}** pour ouvertures propres et remplacements en 15 min. On vous envoie un serrurier de garde ?",
-      spoken: "Je suis Noelia. Si vous êtes coincé dehors ou si vous devez changer votre serrure en urgence, ne vous inquiétez pas. Nos serruriers de garde à {city} interviendront pour une ouverture propre, sans dégâts, en quinze minutes."
+      spoken: "Je suis LUNA. Si vous êtes coincé dehors ou si vous devez changer votre serrure en urgence, ne vous inquiétez pas. Nos serruriers de garde à {city} interviendront pour une ouverture propre, sans dégâts, en quinze minutes."
     },
     caldera: {
       text: "🔥 **VÉRIFICATIONS CHAUDIÈRE & CHAUFFAGE :**\n\n1. **Pression d'eau :** Le manomètre de la chaudière doit être entre **1,2 et 1,5 bar**.\n2. **Arrivée de gaz :** Assurez-vous que la vanne de gaz générale est ouverte.\n3. **Ne touchez pas aux conduits internes :** C'est extrêmement dangereux sans certification.\n\nTechniciens agréés toutes marques à **{city}**. Souhaitez-vous planifier une intervention immédiate ?",
-      spoken: "Bonjour, c'est Noelia. Je vous conseille de vérifier si la pression d'eau est entre un point deux et un point cinq bar. Nos techniciens certifiés à {city} sont prêts à réparer votre chaudière immédiatement."
+      spoken: "Bonjour, c'est LUNA. Je vous conseille de vérifier si la pression d'eau est entre un point deux et un point cinq bar. Nos techniciens certifiés à {city} sont prêts à réparer votre chaudière immédiatement."
     },
     precio: {
       text: "📋 **CHARTE DES TARIFS TRANSPARENTS URGE YA :**\n\n• **Déplacement Gratuit :** Aucun frais de transport si la réparation est effectuée par notre technicien.\n• **Devis Écrit Ferme :** Le technicien évalue le problème sur place et vous donne un coût fixe garanti avant travaux.\n• **Tarifs Directs :** Pas d'intermédiaires ni de frais cachés.\n\nDécrivez-nous votre panne pour obtenir une estimation de tarif ?",
-      spoken: "C'est Noelia. Le déplacement est entièrement gratuit si vous effectuez la réparation avec nous. De plus, le technicien vous remettra un devis écrit et fermé avant de commencer pour votre totale sérénité."
+      spoken: "C'est LUNA. Le déplacement est entièrement gratuit si vous effectuez la réparation avec nous. De plus, le technicien vous remettra un devis écrit et fermé avant de commencer pour votre totale sérénité."
     },
     urgencia: {
       text: "🚨 **COUVERTURE ET DÉLAIS D'INTERVENTION :**\n\n• **Zones couvertes :** Assistance rapide à **Barcelone**, **Madrid** et **Valence**.\n• **Délai d'arrivée :** Garanti en **15 à 25 minutes**.\n• **Opérationnel 24h/24, 7j/7 :** Nous travaillons les week-ends et jours fériés.\n\nSouhaitez-vous qu'un technicien vous rappelle en moins de 5 minutes ?",
-      spoken: "Bonjour, ici Noelia. Nous couvrons Madrid, Barcelone et Valence. Notre délai d'intervention habituel est de quinze à vingt-cinq minutes, vingt-quatre heures sur vingt-quatre."
+      spoken: "Bonjour, ici LUNA. Nous couvrons Madrid, Barcelone et Valence. Notre délai d'intervention habituel est de quinze à vingt-cinq minutes, vingt-quatre heures sur vingt-quatre."
     }
   }
 };
 
-export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssistantProps) {
+export default function AIAssistant({ currentCity, selectedServiceId = 'fontaneria', onOpenBookingWizard }: AIAssistantProps) {
+  const selectedService = SERVICES.find((s) => s.id === selectedServiceId) || SERVICES[0];
   const [isOpen, setIsOpen] = useState(false);
   const [isVoiceMuted, setIsVoiceMuted] = useState(() => {
     const saved = localStorage.getItem('urgeya_voice_muted');
@@ -323,6 +332,8 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
     const saved = localStorage.getItem('urgeya_voice_lang');
     return (saved as 'es' | 'en' | 'ca' | 'fr') || 'es';
   });
+
+  const [aiMode, setAiMode] = useState<'auto' | 'fast' | 'thinking'>('auto');
 
   useEffect(() => {
     localStorage.setItem('urgeya_voice_lang', currentLang);
@@ -352,6 +363,84 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [imageMime, setImageMime] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment');
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const cameraStreamRef = useRef<MediaStream | null>(null);
+
+  const stopCameraStream = () => {
+    if (cameraStreamRef.current) {
+      cameraStreamRef.current.getTracks().forEach(track => track.stop());
+      cameraStreamRef.current = null;
+    }
+    setIsCameraActive(false);
+  };
+
+  const openCamera = async () => {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      try {
+        if (cameraStreamRef.current) {
+          cameraStreamRef.current.getTracks().forEach(track => track.stop());
+        }
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: facingMode } }
+        });
+        cameraStreamRef.current = stream;
+        setIsCameraActive(true);
+        setTimeout(() => {
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+            videoRef.current.play().catch(err => console.log("Video play error:", err));
+          }
+        }, 100);
+      } catch (err) {
+        console.warn("MediaDevices camera access failed or denied, falling back to native input:", err);
+        cameraInputRef.current?.click();
+      }
+    } else {
+      cameraInputRef.current?.click();
+    }
+  };
+
+  const flipCamera = async () => {
+    const newMode = facingMode === 'environment' ? 'user' : 'environment';
+    setFacingMode(newMode);
+    if (cameraStreamRef.current) {
+      cameraStreamRef.current.getTracks().forEach(track => track.stop());
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: newMode } }
+      });
+      cameraStreamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play().catch(err => console.log(err));
+      }
+    } catch (err) {
+      console.warn("Error flipping camera:", err);
+    }
+  };
+
+  const capturePhotoFromStream = () => {
+    if (!videoRef.current) return;
+    const video = videoRef.current;
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      const parts = dataUrl.split(';base64,');
+      if (parts.length === 2) {
+        setUploadedImage(parts[1]);
+        setImageMime('image/jpeg');
+      }
+    }
+    stopCameraStream();
+  };
   const [isTyping, setIsTyping] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -783,6 +872,8 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
       let category = 'other';
       let suggestDispatch = false;
 
+      let usedModel = '';
+
       if (hasImage) {
         const res = await fetch('/api/gemini/analyze-image', {
           method: 'POST',
@@ -792,7 +883,10 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
             mimeType: currentMime,
             currentCity,
             currentLang: targetLang,
-            textPrompt: messageText
+            textPrompt: messageText,
+            selectedServiceId,
+            selectedServiceDetails: selectedService,
+            mode: aiMode
           })
         });
 
@@ -805,6 +899,7 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
         spokenResponse = data.spoken;
         category = data.category || 'other';
         suggestDispatch = !!data.suggestDispatch;
+        usedModel = data.usedModel || '';
       } else {
         const recentMessages = [...messages, userMessage].slice(-6);
         const res = await fetch('/api/gemini/chat', {
@@ -813,7 +908,10 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
           body: JSON.stringify({
             messages: recentMessages,
             currentCity,
-            currentLang: targetLang
+            currentLang: targetLang,
+            selectedServiceId,
+            selectedServiceDetails: selectedService,
+            mode: aiMode
           })
         });
 
@@ -826,6 +924,7 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
         spokenResponse = data.spoken;
         category = data.category || 'other';
         suggestDispatch = !!data.suggestDispatch;
+        usedModel = data.usedModel || '';
       }
 
       setIsTyping(false);
@@ -834,7 +933,8 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
         id: `ai-${Date.now()}`,
         sender: 'ai',
         text: textResponse,
-        timestamp: new Date()
+        timestamp: new Date(),
+        usedModel
       }]);
 
       if (suggestDispatch) {
@@ -889,9 +989,26 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
         }
 
         if (matchKey !== 'default') {
-          const matched = MULTILINGUAL_RESPONSES[targetLang][matchKey];
-          fallbackText = matched.text.replace(/{city}/g, currentCity.name);
-          fallbackSpoken = matched.spoken.replace(/{city}/g, currentCity.name);
+          if (matchKey === 'precio' && selectedService) {
+            const issuesText = selectedService.commonIssues.map(i => `• **${i.name}**: ${i.avgPrice} *(Tiempo est.: ${i.duration})*\n  ${i.description}`).join('\n\n');
+            if (targetLang === 'en') {
+              fallbackText = `💰 **Rates & Pricing for ${selectedService.name} in ${currentCity.name}:**\n\n${selectedService.longDescription}\n\n**Estimated Tariffs:**\n${issuesText}\n\n• **On-site Assessment**: Transparent upfront quote before starting any work.\n• **Guarantee**: Written guarantee on all repairs.\n\nWould you like to dispatch an emergency technician for **${selectedService.name}** right away?`;
+              fallbackSpoken = `Rates for ${selectedService.name} in ${currentCity.name} start at ${selectedService.commonIssues[0]?.avgPrice || '35 euros'}. Would you like to schedule a technician now?`;
+            } else if (targetLang === 'ca') {
+              fallbackText = `💰 **Tarifes i Preus de ${selectedService.name} a ${currentCity.name}:**\n\n${selectedService.longDescription}\n\n**Tarifes estimades:**\n${issuesText}\n\n• **Desplaçament i Diagnòstic**: Pressupost tancat al domicili abans de començar.\n• **Garantia**: Reparacions garantides per escrit.\n\nVol que li enviem un tècnic de **${selectedService.name}** ara mateix?`;
+              fallbackSpoken = `Les tarifes per a ${selectedService.name} a ${currentCity.name} comencen des de ${selectedService.commonIssues[0]?.avgPrice || '35 euros'}. Vol agendar un tècnic ara mateix?`;
+            } else if (targetLang === 'fr') {
+              fallbackText = `💰 **Tarifs et Prix pour ${selectedService.name} à ${currentCity.name} :**\n\n${selectedService.longDescription}\n\n**Tarifs estimés :**\n${issuesText}\n\n• **Déplacement et Diagnostic** : Devis transparent sur place avant toute intervention.\n• **Garantie** : Réparations garanties par écrit.\n\nSouhaitez-vous planifier un technicien **${selectedService.name}** dès maintenant ?`;
+              fallbackSpoken = `Les tarifs pour ${selectedService.name} à ${currentCity.name} commencent à partir de ${selectedService.commonIssues[0]?.avgPrice || '35 euros'}. Souhaitez-vous réserver un technicien ?`;
+            } else {
+              fallbackText = `💰 **Tarifas y Precios Oficiales de ${selectedService.name} en ${currentCity.name}:**\n\n${selectedService.longDescription}\n\n**Desglose detallado de tarifas estimadas:**\n${issuesText}\n\n• **Desplazamiento y Diagnóstico**: Presupuesto cerrado en su domicilio antes de realizar cualquier trabajo.\n• **Garantía por escrito**: Todos los trabajos de ${selectedService.name} están 100% garantizados.\n\n¿Desea que despachemos un técnico de **${selectedService.name}** de urgencia ahora mismo?`;
+              fallbackSpoken = `Para el servicio de ${selectedService.name} en ${currentCity.name}, nuestras tarifas oficiales comienzan desde ${selectedService.commonIssues[0]?.avgPrice || '35 euros'}. El presupuesto exacto se aprueba en mano antes de trabajar. ¿Quieres agendar un técnico ahora?`;
+            }
+          } else {
+            const matched = MULTILINGUAL_RESPONSES[targetLang][matchKey];
+            fallbackText = matched.text.replace(/{city}/g, currentCity.name);
+            fallbackSpoken = matched.spoken.replace(/{city}/g, currentCity.name);
+          }
         } else {
           const isDispatchKeywords = 
             lowerText.includes('enviar') || lowerText.includes('mandar') || lowerText.includes('tecnico') || lowerText.includes('operario') || lowerText.includes('solicitar') ||
@@ -984,12 +1101,81 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
     speakText(confirmSpoken);
   };
 
+  const handleWhatsAppClick = () => {
+    // 1. Gather Client Data safely with fallbacks
+    const clientName = formData.name?.trim() || 'Cliente Urge-Ya';
+    const clientPhone = formData.phone?.trim() || 'No facilitado';
+    const clientAddress = formData.address?.trim() || `No facilitada (${currentCity?.name || 'España'})`;
+    const serviceType = formData.type || selectedService?.name || 'Emergencia Técnica del Hogar';
+
+    // 2. Extract conversation summary / diagnosis from Luna
+    let problemSummary = '';
+    const userMsgs = messages.filter(m => m.sender === 'user').map(m => m.text).filter(Boolean);
+    const aiMsgs = messages.filter(m => m.sender === 'ai').map(m => m.text).filter(Boolean);
+
+    if (userMsgs.length > 0) {
+      problemSummary = userMsgs.slice(-3).join(' / ');
+    } else if (selectedService) {
+      problemSummary = `Servicio urgente de ${selectedService.name}`;
+    } else {
+      problemSummary = 'Avería urgente reportada vía Luna IA';
+    }
+
+    problemSummary = problemSummary.replace(/\*\*/g, '').replace(/[\r\n]+/g, ' ').trim();
+
+    let aiDiagnosis = '';
+    if (aiMsgs.length > 0) {
+      const lastAi = aiMsgs[aiMsgs.length - 1];
+      aiDiagnosis = lastAi.replace(/\*\*/g, '').replace(/[\r\n]+/g, ' ').trim().slice(0, 200);
+      if (lastAi.length > 200) aiDiagnosis += '...';
+    }
+
+    // 3. Handle photos/images uploaded
+    let photoInfo = '';
+    if (uploadedImage) {
+      photoInfo = `\n📸 *Fotografía de Avería:* Sí (Foto de la avería adjuntada en el chat con Luna IA - Formato ${imageMime || 'image/jpeg'})`;
+    }
+
+    // 4. Build complete formatted WhatsApp message
+    const messageLines = [
+      `🚨 *SOLICITUD DE TÉCNICO DE GUARDIA 24H - LUNA IA*`,
+      ``,
+      `👤 *Cliente:* ${clientName}`,
+      `📞 *Teléfono de Contacto:* ${clientPhone}`,
+      `📍 *Dirección de Emergencia:* ${clientAddress}`,
+      `🛠️ *Tipo de Avería:* ${serviceType}`,
+      ``,
+      `📝 *Resumen del Problema:*`,
+      `${problemSummary}`
+    ];
+
+    if (aiDiagnosis) {
+      messageLines.push(``);
+      messageLines.push(`🤖 *Diagnóstico Previsto por Luna IA:*`);
+      messageLines.push(`${aiDiagnosis}`);
+    }
+
+    if (photoInfo) {
+      messageLines.push(photoInfo);
+    }
+
+    messageLines.push(``);
+    messageLines.push(`⏰ *Delegación:* ${currentCity?.name || 'España'}`);
+    messageLines.push(`Solicito atención prioritaria y envío de un técnico de guardia a la mayor brevedad. ¡Muchas gracias!`);
+
+    const fullMessage = messageLines.join('\n');
+    const encodedText = encodeURIComponent(fullMessage);
+
+    const whatsappUrl = `https://wa.me/34664065855?text=${encodedText}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   const currentLabels = UI_LABELS[currentLang];
 
   return (
     <>
       {/* Floating Action Button - Same layout, size & positioning as user requested */}
-      <div className="fixed bottom-6 left-6 z-40">
+      <div className="fixed bottom-3 left-3 sm:bottom-6 sm:left-6 z-40">
         <button
           onClick={() => {
             setIsOpen(true);
@@ -1042,20 +1228,20 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
             />
 
             {/* Modal Container Wrapper for Responsiveness & Desktop centering */}
-            <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-4 sm:p-6 md:p-10 pointer-events-none pb-[calc(1rem+env(safe-area-inset-bottom))]">
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4 pointer-events-none pb-[calc(0.5rem+env(safe-area-inset-bottom))] overflow-y-auto">
               {/* Premium Chat Window */}
               <motion.div
                 initial={{ opacity: 0, y: 50, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 50, scale: 0.95 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-                className="pointer-events-auto w-full max-w-[440px] h-[600px] max-h-[90vh] sm:max-h-[85vh] bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col font-sans"
+                className="pointer-events-auto w-full max-w-[480px] h-[620px] max-h-[96dvh] sm:max-h-[90dvh] bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col font-sans my-auto"
                 id="ai-chat-window"
               >
                 {/* Voice Centered Gradient Header */}
-                <div className="relative p-4 pr-28 bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-950 border-b border-slate-800 flex items-center justify-between shrink-0">
-                  <div className="flex items-center gap-3">
-                    <div className="relative p-2.5 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-xl text-white shadow-lg">
+                <div className="relative p-3 sm:p-4 pr-24 sm:pr-28 bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-950 border-b border-slate-800 flex items-center justify-between shrink-0">
+                  <div className="flex items-center gap-2.5">
+                    <div className="relative p-2 sm:p-2.5 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-xl text-white shadow-lg">
                       {isSpeaking ? (
                         <div className="flex gap-0.5 items-end justify-center w-5 h-5 h-[16px]">
                           <span className="w-0.5 bg-white rounded-full animate-voice-bar-1"></span>
@@ -1064,32 +1250,32 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
                           <span className="w-0.5 bg-white rounded-full animate-voice-bar-4"></span>
                         </div>
                       ) : (
-                        <Sparkles className="w-5 h-5 text-amber-200 animate-pulse" />
+                        <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-amber-200 animate-pulse" />
                       )}
                       <span className="absolute bottom-0 right-0 h-2.5 w-2.5 bg-success rounded-full border border-slate-900"></span>
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <h4 className="font-display font-black text-white text-sm tracking-tight">{currentLabels.speakWelBtn}</h4>
+                        <h4 className="font-display font-black text-white text-xs sm:text-sm tracking-tight">{currentLabels.speakWelBtn}</h4>
                         <span className="bg-rose-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider animate-pulse">24H</span>
                       </div>
-                      <p className="text-[10px] text-slate-400">{currentLabels.headerSubtitle}</p>
+                      <p className="text-[9px] sm:text-[10px] text-slate-400">{currentLabels.headerSubtitle}</p>
                     </div>
                   </div>
 
                   {/* Speaker Control & Absolute Close Button (Min 44x44px tap targets) */}
-                  <div className="absolute right-16 top-3.5 z-20">
+                  <div className="absolute right-14 sm:right-16 top-2.5 sm:top-3.5 z-20">
                     <button
                       onClick={() => setIsVoiceMuted(!isVoiceMuted)}
-                      className={`w-11 h-11 flex items-center justify-center rounded-full transition cursor-pointer border ${
+                      className={`w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full transition cursor-pointer border ${
                         isVoiceMuted 
                           ? 'bg-slate-800/80 border-rose-800 text-rose-400 hover:text-rose-300' 
                           : 'bg-indigo-600/20 border-indigo-500/20 text-indigo-300 hover:text-white hover:bg-indigo-600/30'
                       }`}
                       title={isVoiceMuted ? currentLabels.unmuteVoice : currentLabels.muteVoice}
-                      style={{ width: '44px', height: '44px' }}
+                      style={{ width: '40px', height: '40px' }}
                     >
-                      {isVoiceMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                      {isVoiceMuted ? <VolumeX className="w-4 h-4 sm:w-5 sm:h-5" /> : <Volume2 className="w-4 h-4 sm:w-5 sm:h-5" />}
                     </button>
                   </div>
 
@@ -1099,18 +1285,18 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
                       setIsSpeaking(false);
                       setIsOpen(false);
                     }}
-                    className="absolute top-3.5 right-4 z-20 w-11 h-11 flex items-center justify-center bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white rounded-full transition cursor-pointer border border-slate-700/60 shadow-lg"
+                    className="absolute top-2.5 sm:top-3.5 right-3 sm:right-4 z-20 w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white rounded-full transition cursor-pointer border border-slate-700/60 shadow-lg"
                     title={currentLabels.close}
-                    style={{ width: '44px', height: '44px' }}
+                    style={{ width: '40px', height: '40px' }}
                   >
-                    <X className="w-5 h-5 stroke-[2.5]" />
+                    <X className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
                   </button>
                 </div>
 
                 {/* Multilingual Selector Row */}
-                <div className="flex items-center justify-between px-4 py-2 bg-slate-950/60 border-b border-slate-800/60 gap-1 overflow-x-auto shrink-0">
+                <div className="flex items-center justify-between px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-950/60 border-b border-slate-800/60 gap-1 overflow-x-auto shrink-0">
                   <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest shrink-0">Idioma / Lang:</span>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1 sm:gap-1.5">
                     {LANGUAGES.map((lang) => (
                       <button
                         key={lang.code}
@@ -1131,19 +1317,93 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
                           // Trigger new audio in the newly selected language
                           speakText(welcome.spoken.replace(/{city}/g, currentCity.name), lang.code);
                         }}
-                        className={`px-2 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                        className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer ${
                           currentLang === lang.code
                             ? 'bg-indigo-600/90 text-white font-extrabold shadow-sm border border-indigo-500'
                             : 'bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800/60'
                         }`}
                         title={lang.label}
-                        style={{ minHeight: '32px' }}
+                        style={{ minHeight: '28px' }}
                       >
                         <span>{lang.flag}</span>
                         <span className="text-[9px]">{lang.name}</span>
                       </button>
                     ))}
                   </div>
+                </div>
+
+                {/* AI Model & Latency Selector Row */}
+                <div className="flex items-center justify-between px-3 sm:px-4 py-1.5 bg-slate-900 border-b border-slate-800/80 text-[10px] shrink-0 gap-1 overflow-x-auto">
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest shrink-0 flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-amber-400" /> Modo IA:
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setAiMode('auto')}
+                      className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition flex items-center gap-1 cursor-pointer ${
+                        aiMode === 'auto'
+                          ? 'bg-indigo-600 text-white font-extrabold border border-indigo-400'
+                          : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
+                      }`}
+                      title="Modo Inteligente Equilibrado (gemini-3.6-flash)"
+                    >
+                      <span>🤖 Auto</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAiMode('fast')}
+                      className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition flex items-center gap-1 cursor-pointer ${
+                        aiMode === 'fast'
+                          ? 'bg-amber-500 text-slate-950 font-extrabold border border-amber-300 shadow-sm'
+                          : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
+                      }`}
+                      title="Baja Latencia / Respuesta Ultra Rápida (gemini-3.1-flash-lite)"
+                    >
+                      <span>⚡ Baja Latencia</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAiMode('thinking')}
+                      className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition flex items-center gap-1 cursor-pointer ${
+                        aiMode === 'thinking'
+                          ? 'bg-purple-600 text-white font-extrabold border border-purple-400 shadow-sm'
+                          : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
+                      }`}
+                      title="Pensamiento Profundo para Diagnósticos Complejos (gemini-3.1-pro-preview HIGH)"
+                    >
+                      <span>🧠 Pensamiento Profundo</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Selected Active Service Context Banner */}
+                <div className="px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-900/90 border-b border-indigo-500/20 flex items-center justify-between text-[11px] shrink-0 gap-2">
+                  <div className="flex items-center gap-1.5 text-indigo-300 font-semibold truncate">
+                    <span className="text-amber-400 font-extrabold text-[9px] sm:text-[10px] uppercase tracking-wider shrink-0">📍 Activo:</span>
+                    <span className="text-white font-bold bg-indigo-950 px-1.5 sm:px-2 py-0.5 rounded-md border border-indigo-500/30 text-[11px] shrink-0">
+                      {selectedService.name}
+                    </span>
+                    <span className="text-slate-400 hidden xs:inline text-[9px] sm:text-[10px] truncate">
+                      ({selectedService.commonIssues[0]?.avgPrice || 'Desde 35€'})
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const query = currentLang === 'en' 
+                        ? `What are the rates and prices for ${selectedService.name}?`
+                        : currentLang === 'ca'
+                        ? `Quines són les tarifes i preus de ${selectedService.name}?`
+                        : currentLang === 'fr'
+                        ? `Quels sont les tarifs et prix pour ${selectedService.name} ?`
+                        : `¿Cuáles son las tarifas y precios de ${selectedService.name}?`;
+                      setInputValue(query);
+                    }}
+                    className="text-[9px] sm:text-[10px] text-amber-300 hover:text-amber-200 bg-amber-500/10 hover:bg-amber-500/20 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg border border-amber-500/30 font-bold transition cursor-pointer shrink-0"
+                  >
+                    {currentLang === 'en' ? 'Check Rates' : currentLang === 'ca' ? 'Consultar Tarifes' : currentLang === 'fr' ? 'Consulter Tarifs' : 'Consultar Tarifas'}
+                  </button>
                 </div>
 
               {/* Speech Error Banner */}
@@ -1193,7 +1453,15 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
                       </div>
                       
                       <div className="flex justify-between items-center mt-1.5 pt-1.5 border-t border-white/5 text-[9px] text-slate-500">
-                        <span className="uppercase text-slate-400 font-bold">Respuesta Inteligente</span>
+                        <span className="uppercase font-bold flex items-center gap-1">
+                          {msg.usedModel?.includes('flash-lite') ? (
+                            <span className="text-amber-400 font-extrabold flex items-center gap-1">⚡ Baja Latencia (3.1-flash-lite)</span>
+                          ) : msg.usedModel?.includes('pro-preview') ? (
+                            <span className="text-purple-400 font-extrabold flex items-center gap-1">🧠 Pensamiento Profundo (3.1-pro)</span>
+                          ) : (
+                            <span className="text-slate-400 font-bold">🤖 Respuesta IA</span>
+                          )}
+                        </span>
                         <span>{msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                       </div>
                     </div>
@@ -1211,44 +1479,52 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
                   <motion.div
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-slate-900 border border-indigo-500/30 rounded-2xl p-4 space-y-3 shadow-lg"
+                    className="bg-slate-900 border border-rose-500/40 rounded-2xl p-4 space-y-3.5 shadow-2xl relative overflow-hidden"
                   >
-                    <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
-                      <MapPin className="w-4 h-4 text-rose-400 animate-bounce" />
-                      <h5 className="text-xs font-black text-white uppercase tracking-wider">{currentLabels.dispatchTitle}</h5>
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 via-amber-400 to-rose-500 animate-pulse"></div>
+
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                      <div className="flex items-center gap-2">
+                        <span className="flex h-2.5 w-2.5 rounded-full bg-rose-500 animate-ping" />
+                        <MapPin className="w-4 h-4 text-rose-400" />
+                        <h5 className="text-xs font-black text-white uppercase tracking-wider">{currentLabels.dispatchTitle}</h5>
+                      </div>
+                      <span className="text-[10px] bg-rose-950/80 text-rose-300 font-extrabold px-2 py-0.5 rounded-full border border-rose-800/60">
+                        24H ACTIVO
+                      </span>
                     </div>
 
-                    <form onSubmit={handleDispatchSubmit} className="space-y-2.5">
+                    <form onSubmit={handleDispatchSubmit} className="space-y-3">
                       <div>
-                        <label className="block text-[10px] text-slate-400 font-bold mb-1">{currentLabels.labelName}</label>
+                        <label className="block text-[10px] text-slate-300 font-bold mb-1">{currentLabels.labelName}</label>
                         <input
                           type="text"
                           required
                           value={formData.name}
                           onChange={(e) => setFormData({...formData, name: e.target.value})}
                           placeholder="Ej: Marta Gómez"
-                          className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500"
+                          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
                         />
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-2 gap-2.5">
                         <div>
-                          <label className="block text-[10px] text-slate-400 font-bold mb-1">{currentLabels.labelPhone}</label>
+                          <label className="block text-[10px] text-slate-300 font-bold mb-1">{currentLabels.labelPhone}</label>
                           <input
                             type="tel"
                             required
                             value={formData.phone}
                             onChange={(e) => setFormData({...formData, phone: e.target.value})}
                             placeholder="Ej: 696 669 689"
-                            className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500"
+                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
                           />
                         </div>
                         <div>
-                          <label className="block text-[10px] text-slate-400 font-bold mb-1">{currentLabels.labelType}</label>
+                          <label className="block text-[10px] text-slate-300 font-bold mb-1">{currentLabels.labelType}</label>
                           <select
                             value={formData.type}
                             onChange={(e) => setFormData({...formData, type: e.target.value})}
-                            className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-[11px] text-white focus:outline-none focus:border-indigo-500"
+                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-[11px] text-white focus:outline-none focus:border-indigo-500 transition cursor-pointer"
                           >
                             <option value="Fontanería">{currentLabels.optPlumbing}</option>
                             <option value="Electricidad">{currentLabels.optElectric}</option>
@@ -1259,23 +1535,37 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
                       </div>
 
                       <div>
-                        <label className="block text-[10px] text-slate-400 font-bold mb-1">{currentLabels.labelAddress}</label>
+                        <label className="block text-[10px] text-slate-300 font-bold mb-1">{currentLabels.labelAddress}</label>
                         <input
                           type="text"
                           required
                           value={formData.address}
                           onChange={(e) => setFormData({...formData, address: e.target.value})}
                           placeholder="Calle, Número, Piso y Ciudad"
-                          className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500"
+                          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
                         />
                       </div>
 
-                      <button
-                        type="submit"
-                        className="w-full bg-rose-600 hover:bg-rose-500 text-white font-black py-2 rounded-xl text-xs uppercase tracking-wide shadow-lg transition cursor-pointer"
-                      >
-                        {currentLabels.btnSubmitDispatch}
-                      </button>
+                      <div className="space-y-2 pt-1">
+                        <button
+                          type="submit"
+                          className="w-full bg-gradient-to-r from-rose-600 via-rose-500 to-amber-500 hover:from-rose-500 hover:to-amber-400 text-white font-black py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-rose-600/20 transition cursor-pointer active:scale-98 flex items-center justify-center gap-2"
+                        >
+                          <MapPin className="w-4 h-4 shrink-0" />
+                          <span>{currentLabels.btnSubmitDispatch}</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={handleWhatsAppClick}
+                          className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white font-extrabold py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-md shadow-emerald-600/20 transition cursor-pointer active:scale-98 flex items-center justify-center gap-2"
+                        >
+                          <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.937 3.659 1.432 5.631 1.432h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path>
+                          </svg>
+                          <span>ENVIAR FICHA COMPLETA A WHATSAPP</span>
+                        </button>
+                      </div>
                     </form>
                   </motion.div>
                 )}
@@ -1284,9 +1574,9 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
                   <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="bg-indigo-950/40 border-2 border-success/40 rounded-2xl p-4 text-center space-y-3"
+                    className="bg-slate-900 border-2 border-emerald-500/50 rounded-2xl p-4 text-center space-y-3.5 shadow-2xl"
                   >
-                    <div className="w-12 h-12 bg-success/20 rounded-full flex items-center justify-center mx-auto text-success">
+                    <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto text-emerald-400 border border-emerald-500/30 animate-pulse">
                       <Check className="w-6 h-6 stroke-[3px]" />
                     </div>
                     <div>
@@ -1294,7 +1584,7 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
                       <p className="text-[11px] text-slate-300 mt-1">{currentLabels.successText} <strong>Don {formData.name}</strong>.</p>
                     </div>
 
-                    <div className="bg-slate-950/60 p-3 rounded-xl space-y-1.5 text-left text-xs">
+                    <div className="bg-slate-950 p-3 rounded-xl space-y-2 text-left text-xs border border-slate-800">
                       <div className="flex gap-2 text-slate-300">
                         <MapPin className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />
                         <span><strong>{currentLabels.lblDestiny}</strong> {formData.address}</span>
@@ -1309,19 +1599,32 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
                       </div>
                     </div>
 
-                    <div className="pt-1 flex gap-2">
-                      <a
-                        href={`tel:${currentCity.phone}`}
-                        className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-lg text-xs font-bold transition flex items-center justify-center"
-                      >
-                        {currentLabels.btnCallCentral}
-                      </a>
+                    <div className="space-y-2 pt-1">
                       <button
-                        onClick={() => setDispatchStep('idle')}
-                        className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 rounded-lg text-xs font-bold transition"
+                        onClick={handleWhatsAppClick}
+                        className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white py-2.5 rounded-xl text-xs font-black transition cursor-pointer flex items-center justify-center gap-2 shadow-md uppercase tracking-wider"
                       >
-                        {currentLabels.btnCloseTicket}
+                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0">
+                          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.937 3.659 1.432 5.631 1.432h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path>
+                        </svg>
+                        <span>ABRIR EN WHATSAPP (34664065855)</span>
                       </button>
+
+                      <div className="flex gap-2">
+                        <a
+                          href={`tel:${currentCity.phone}`}
+                          className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5"
+                        >
+                          <Phone className="w-3.5 h-3.5 shrink-0" />
+                          <span>{currentLabels.btnCallCentral}</span>
+                        </a>
+                        <button
+                          onClick={() => setDispatchStep('idle')}
+                          className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 rounded-xl text-xs font-bold transition cursor-pointer"
+                        >
+                          {currentLabels.btnCloseTicket}
+                        </button>
+                      </div>
                     </div>
                   </motion.div>
                 )}
@@ -1344,76 +1647,129 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Quick Emergency Inquiries Area */}
-              <div className="p-3 bg-slate-950 border-t border-slate-800/80 shrink-0">
-                <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-2 px-1">{currentLabels.quickTitle}</p>
-                <div className="flex flex-wrap gap-1.5">
+              {/* Bottom Trigger Panel */}
+              <div className="p-2.5 sm:p-3 bg-slate-900 border-t border-slate-800 flex flex-col gap-2 shrink-0 max-h-[50vh] overflow-y-auto custom-scrollbar">
+                {/* Live Camera Viewfinder Modal/Overlay */}
+                {isCameraActive && (
+                  <div className="p-2 sm:p-3 bg-slate-950 border border-indigo-500/40 rounded-2xl flex flex-col items-center gap-2 shadow-2xl relative animate-fadeIn">
+                    <div className="relative w-full h-36 sm:h-52 bg-slate-900 rounded-xl overflow-hidden flex items-center justify-center border border-slate-800">
+                      <video
+                        ref={videoRef}
+                        autoPlay
+                        playsInline
+                        muted
+                        className="w-full h-full object-cover"
+                      />
+                      
+                      {/* Top action controls */}
+                      <div className="absolute top-2 right-2 flex gap-2">
+                        <button
+                          type="button"
+                          onClick={flipCamera}
+                          className="p-1.5 bg-slate-950/80 hover:bg-slate-900 text-white rounded-full transition cursor-pointer backdrop-blur-md border border-slate-700"
+                          title="Cambiar Cámara"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5 text-indigo-400" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={stopCameraStream}
+                          className="p-1.5 bg-slate-950/80 hover:bg-slate-900 text-white rounded-full transition cursor-pointer backdrop-blur-md border border-slate-700"
+                          title="Cerrar Cámara"
+                        >
+                          <X className="w-3.5 h-3.5 text-slate-300" />
+                        </button>
+                      </div>
+
+                      <div className="absolute top-2 left-2 px-2 py-0.5 bg-red-600/90 text-white text-[9px] font-bold rounded-md flex items-center gap-1 backdrop-blur-sm animate-pulse">
+                        <div className="w-1.5 h-1.5 rounded-full bg-white" />
+                        <span>CÁMARA EN VIVO</span>
+                      </div>
+                    </div>
+
+                    {/* Shutter capture bar */}
+                    <div className="flex items-center justify-center gap-2 w-full pt-0.5">
+                      <button
+                        type="button"
+                        onClick={capturePhotoFromStream}
+                        className="flex items-center justify-center gap-1.5 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-extrabold rounded-xl transition cursor-pointer shadow-lg shadow-indigo-500/25 active:scale-95 uppercase tracking-wider"
+                      >
+                        <Camera className="w-3.5 h-3.5" />
+                        <span>CAPTURAR FOTO</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={stopCameraStream}
+                        className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition cursor-pointer"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Quick 4-action grid bar */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                  <input
+                    type="file"
+                    ref={cameraInputRef}
+                    onChange={handleImageUpload}
+                    accept="image/*"
+                    capture="environment"
+                    className="hidden"
+                  />
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageUpload}
+                    accept="image/*"
+                    className="hidden"
+                  />
+
+                  <a
+                    href={`tel:${currentCity.phone}`}
+                    className="flex items-center justify-center gap-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-[11px] font-bold py-1.5 px-2 rounded-xl transition cursor-pointer text-center truncate"
+                    title={`Llamar ${currentCity.phoneFormatted}`}
+                  >
+                    <Phone className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                    <span className="truncate">{currentLabels.btnCall}</span>
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={triggerDispatchForm}
+                    className="flex items-center justify-center gap-1 bg-gradient-to-r from-rose-600 to-amber-500 hover:from-rose-500 hover:to-amber-400 text-white text-[11px] font-black py-1.5 px-2 rounded-xl transition cursor-pointer shadow-md uppercase tracking-wider text-center truncate"
+                  >
+                    <MapPin className="w-3.5 h-3.5 shrink-0" />
+                    <span className="truncate">{currentLabels.btnDispatch}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={openCamera}
+                    className="flex items-center justify-center gap-1 py-1.5 px-2 bg-slate-950 hover:bg-slate-800 text-indigo-300 hover:text-indigo-200 border border-indigo-500/30 hover:border-indigo-400/60 rounded-xl text-[11px] font-bold transition cursor-pointer shadow-sm active:scale-95 text-center truncate"
+                  >
+                    <Camera className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                    <span className="truncate">{currentLang === 'en' ? 'Camera' : currentLang === 'ca' ? 'Càmera' : currentLang === 'fr' ? 'Appareil photo' : 'Usar Cámara'}</span>
+                  </button>
+
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex items-center gap-1.5 text-[11px] bg-indigo-950/65 hover:bg-indigo-900 text-indigo-200 border-2 border-indigo-500/40 hover:border-indigo-500/80 rounded-lg px-3 py-1.5 transition text-left font-extrabold cursor-pointer shadow-[0_0_15px_rgba(99,102,241,0.15)] hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] animate-pulse-subtle"
+                    className="flex items-center justify-center gap-1 py-1.5 px-2 bg-slate-950 hover:bg-slate-800 text-purple-300 hover:text-purple-200 border border-purple-500/30 hover:border-purple-400/60 rounded-xl text-[11px] font-bold transition cursor-pointer shadow-sm active:scale-95 text-center truncate"
                   >
-                    <Image className="w-3.5 h-3.5 text-purple-400" />
-                    <span>{currentLabels.btnUploadPhoto}</span>
-                  </button>
-                  <button
-                    onClick={() => handleQuickQuestion("💧 Fugas e Inundaciones", "fuga")}
-                    className="flex items-center gap-1 text-[11px] bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 rounded-lg px-2.5 py-1.5 transition text-left font-bold cursor-pointer"
-                  >
-                    <Droplet className="w-3.5 h-3.5 text-blue-400" />
-                    <span>{currentLabels.quickFuga}</span>
-                  </button>
-                  <button
-                    onClick={() => handleQuickQuestion("⚡ Apagón y Cortocircuito", "apagón")}
-                    className="flex items-center gap-1 text-[11px] bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 rounded-lg px-2.5 py-1.5 transition text-left font-bold cursor-pointer"
-                  >
-                    <Zap className="w-3.5 h-3.5 text-amber-400" />
-                    <span>{currentLabels.quickApagon}</span>
-                  </button>
-                  <button
-                    onClick={() => handleQuickQuestion("🔑 Cerrajería de Urgencia", "cerrajeria")}
-                    className="flex items-center gap-1 text-[11px] bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 rounded-lg px-2.5 py-1.5 transition text-left font-bold cursor-pointer"
-                  >
-                    <Key className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>{currentLabels.quickCerrajeria}</span>
-                  </button>
-                  <button
-                    onClick={() => handleQuickQuestion("🔥 Averías de Caldera", "caldera")}
-                    className="flex items-center gap-1 text-[11px] bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 rounded-lg px-2.5 py-1.5 transition text-left font-bold cursor-pointer"
-                  >
-                    <Flame className="w-3.5 h-3.5 text-red-400" />
-                    <span>{currentLabels.quickCaldera}</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Bottom Trigger Panel */}
-              <div className="p-3 bg-slate-900 border-t border-slate-800 flex flex-col gap-2 shrink-0">
-                {/* Immediate dispatcher or call widgets */}
-                <div className="grid grid-cols-2 gap-2">
-                  <a
-                    href={`tel:${currentCity.phone}`}
-                    className="flex items-center justify-center gap-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-bold py-2 rounded-xl transition cursor-pointer"
-                  >
-                    <Phone className="w-3.5 h-3.5 text-blue-400" />
-                    <span>{currentLabels.btnCall} {currentCity.phoneFormatted}</span>
-                  </a>
-                  <button
-                    onClick={triggerDispatchForm}
-                    className="flex items-center justify-center gap-1.5 bg-gradient-to-r from-rose-600 to-amber-500 hover:from-rose-500 hover:to-amber-400 text-white text-xs font-black py-2 rounded-xl transition cursor-pointer shadow-md uppercase tracking-wider"
-                  >
-                    <MapPin className="w-3.5 h-3.5 shrink-0" />
-                    <span>{currentLabels.btnDispatch}</span>
+                    <Image className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                    <span className="truncate">{currentLang === 'en' ? 'Upload Photo' : currentLang === 'ca' ? 'Carregar Foto' : currentLang === 'fr' ? 'Charger Photo' : 'Subir Foto'}</span>
                   </button>
                 </div>
 
                 {/* Image upload preview widget */}
                 {uploadedImage && (
-                  <div className="flex items-center gap-2 px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl">
+                  <div className="flex items-center gap-2 px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded-xl">
                     <img
                       src={`data:${imageMime};base64,${uploadedImage}`}
                       alt="Preview"
-                      className="w-10 h-10 object-cover rounded-lg border border-slate-700"
+                      className="w-8 h-8 object-cover rounded-lg border border-slate-700"
                       referrerPolicy="no-referrer"
                     />
                     <div className="flex-1 min-w-0">
@@ -1437,7 +1793,7 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
                   </div>
                 )}
 
-                {/* Text input form with real-time mic input fallback and image upload button */}
+                {/* Text input form with real-time mic input fallback */}
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -1446,34 +1802,18 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
                   className="flex gap-2 items-center"
                 >
                   <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleImageUpload}
-                    accept="image/*"
-                    className="hidden"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl transition flex items-center justify-center shrink-0 cursor-pointer"
-                    title={currentLang === 'en' ? "Upload Photo of Breakdown" : "Subir Foto de la Avería"}
-                  >
-                    <Image className="w-4 h-4 text-purple-400" />
-                  </button>
-
-                  <input
                     type="text"
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     placeholder={currentLabels.inputPlaceholder}
-                    className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
+                    className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
                   />
                   
                   {/* Real-time speech input trigger */}
                   <button
                     type="button"
                     onClick={startSpeechRecognition}
-                    className={`p-2.5 rounded-xl transition flex items-center justify-center shrink-0 cursor-pointer ${
+                    className={`p-2 rounded-xl transition flex items-center justify-center shrink-0 cursor-pointer ${
                       isListening 
                         ? 'bg-rose-600 text-white animate-pulse' 
                         : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white'
@@ -1486,13 +1826,13 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
                   <button
                     type="submit"
                     disabled={!inputValue.trim() && !uploadedImage}
-                    className="p-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center shrink-0"
+                    className="p-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center shrink-0"
                   >
                     <Send className="w-4 h-4" />
                   </button>
                 </form>
 
-                {/* Secondary Exit Button (Mandatory) */}
+                {/* Secondary Exit Button */}
                 <button
                   type="button"
                   onClick={() => {
@@ -1500,7 +1840,7 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
                     setIsSpeaking(false);
                     setIsOpen(false);
                   }}
-                  className="w-full text-center text-slate-400 hover:text-slate-300 text-[10px] uppercase tracking-widest font-extrabold py-2 transition cursor-pointer bg-slate-950/50 hover:bg-slate-950 border border-slate-800/80 rounded-xl"
+                  className="w-full text-center text-slate-400 hover:text-slate-300 text-[9px] sm:text-[10px] uppercase tracking-widest font-extrabold py-1.5 transition cursor-pointer bg-slate-950/50 hover:bg-slate-950 border border-slate-800/80 rounded-xl"
                 >
                   {currentLabels.btnExit}
                 </button>

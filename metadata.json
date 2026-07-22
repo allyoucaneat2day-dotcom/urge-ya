@@ -1,6 +1,6 @@
 {
   "name": "Urge Ya",
   "description": "Servicio de asistencia técnica de urgencia 24h de fontanería, electricidad, calderas, gas y aire acondicionado.",
-  "requestFramePermissions": ["microphone"],
+  "requestFramePermissions": ["microphone", "camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

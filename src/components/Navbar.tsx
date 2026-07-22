@@ -144,11 +144,11 @@ export default function Navbar({ currentCity, onCityChange, onServiceSelect }: N
 
       {/* Mobile Slide-down Menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden bg-white border-t border-slate-100 px-4 py-4 flex flex-col gap-3 shadow-lg" id="mobile-menu">
+        <div className="lg:hidden bg-white border-t border-slate-100 px-4 py-4 flex flex-col gap-3 shadow-lg max-h-[75vh] overflow-y-auto" id="mobile-menu">
           <div className="text-xs font-bold text-slate-400 uppercase tracking-wider pb-1">
             Nuestros Servicios
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {servicesMenu.map((menuItem) => (
               <a
                 key={menuItem.id}

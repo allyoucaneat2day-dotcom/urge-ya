@@ -159,7 +159,7 @@ export default function App() {
   };
 
   return (
-    <div className="bg-slate-50 text-slate-800 min-h-screen font-sans flex flex-col justify-between">
+    <div className="bg-slate-50 text-slate-800 min-h-screen font-sans flex flex-col justify-between overflow-x-hidden">
       
       {/* 1. Header & Navigation */}
       <Navbar
@@ -498,6 +498,7 @@ export default function App() {
       {/* 11. Custom widgets: Floating actions at corners (AIAssistant and Whatsapp) */}
       <AIAssistant
         currentCity={currentCity}
+        selectedServiceId={selectedServiceId}
         onOpenBookingWizard={(serviceId, issue) => {
           if (serviceId) setSelectedServiceId(serviceId as any);
           if (issue) setSelectedIssue(issue as any);
@@ -505,7 +506,7 @@ export default function App() {
         }}
       />
 
-      <div className="fixed bottom-6 right-6 z-40">
+      <div className="fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-40">
         <a
           href="#"
           onClick={handleWhatsappClick}

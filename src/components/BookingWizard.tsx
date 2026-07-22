@@ -112,15 +112,15 @@ export default function BookingWizard({
       ></div>
 
       {/* Modal Box */}
-      <div className="flex min-h-screen items-center justify-center p-4 text-center">
-        <div className="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all w-full max-w-lg border border-slate-200">
+      <div className="flex items-center justify-center p-2 sm:p-4 text-center my-auto min-h-screen">
+        <div className="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all w-full max-w-lg border border-slate-200 max-h-[94dvh] flex flex-col my-auto">
           
           {/* Header */}
-          <div className="bg-primary text-white px-6 py-4 flex justify-between items-center relative">
+          <div className="bg-primary text-white px-4 py-3 sm:px-6 sm:py-4 flex justify-between items-center relative shrink-0">
             <div className="absolute top-0 left-0 right-0 h-1 bg-accent"></div>
             <div>
-              <h3 className="font-display font-extrabold text-lg tracking-tight">Solicitud de Técnico Autorizado</h3>
-              <p className="text-[10px] text-blue-200 font-extrabold uppercase tracking-wider">Presupuesto sin compromiso - Desplazamiento Gratis</p>
+              <h3 className="font-display font-extrabold text-base sm:text-lg tracking-tight">Solicitud de Técnico Autorizado</h3>
+              <p className="text-[9px] sm:text-[10px] text-blue-200 font-extrabold uppercase tracking-wider">Presupuesto sin compromiso - Desplazamiento Gratis</p>
             </div>
             <button 
               onClick={onClose}
@@ -131,16 +131,16 @@ export default function BookingWizard({
           </div>
 
           {/* Steps indicator */}
-          <div className="bg-slate-50 border-b border-slate-200 px-6 py-3.5 flex justify-between items-center text-xs font-extrabold text-slate-400">
+          <div className="bg-slate-50 border-b border-slate-200 px-4 py-2.5 sm:px-6 sm:py-3.5 flex justify-between items-center text-xs font-extrabold text-slate-400 shrink-0">
             <div className="flex items-center gap-1.5">
-              <span className={`h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-black ${
+              <span className={`h-5 w-5 sm:h-6 sm:w-6 rounded-full flex items-center justify-center text-[10px] font-black ${
                 step >= 1 ? 'bg-primary text-white' : 'bg-slate-200 text-slate-500'
               }`}>1</span>
               <span className={step >= 1 ? 'text-primary' : ''}>Avería</span>
             </div>
-            <div className="h-px bg-slate-200 flex-1 mx-4"></div>
+            <div className="h-px bg-slate-200 flex-1 mx-3 sm:mx-4"></div>
             <div className="flex items-center gap-1.5">
-              <span className={`h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-black ${
+              <span className={`h-5 w-5 sm:h-6 sm:w-6 rounded-full flex items-center justify-center text-[10px] font-black ${
                 step === 2 ? 'bg-primary text-white' : 'bg-slate-200 text-slate-500'
               }`}>2</span>
               <span className={step === 2 ? 'text-primary' : ''}>Contacto y Dirección</span>
@@ -148,7 +148,7 @@ export default function BookingWizard({
           </div>
 
           {/* Form */}
-          <form onSubmit={handleFormSubmit} className="p-6 space-y-5">
+          <form onSubmit={handleFormSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 custom-scrollbar">
             {step === 1 ? (
               /* STEP 1: SERVICE & PROBLEM DETAILS */
               <div className="space-y-4">
