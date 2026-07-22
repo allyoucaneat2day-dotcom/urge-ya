@@ -378,20 +378,6 @@ export default function AIAssistant({ currentCity, onOpenBookingWizard }: AIAssi
     }
   }, [isVoiceMuted]);
 
-  // Load browser voices proactively
-  useEffect(() => {
-    const loadVoices = () => {
-      window.speechSynthesis?.getVoices();
-    };
-    loadVoices();
-    if (window.speechSynthesis) {
-      window.speechSynthesis.onvoiceschanged = loadVoices;
-    }
-    return () => {
-      window.speechSynthesis?.cancel();
-    };
-  }, []);
-
   // Scroll to bottom on updates
   useEffect(() => {
     if (messagesEndRef.current) {

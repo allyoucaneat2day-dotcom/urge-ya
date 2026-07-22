@@ -31,10 +31,12 @@ export default function HeroSection({ currentCity, onOpenBookingWizard }: HeroSe
       <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none z-0 opacity-40">
         <video
           src="https://uxxkrliutucqfaoortdb.supabase.co/storage/v1/object/public/web%20urge%20ya/videos/mochilaurgeyacompleto.mp4"
+          poster="https://uxxkrliutucqfaoortdb.supabase.co/storage/v1/object/public/web%20urge%20ya/inagenes/IMG-20260714-WA0009.jpg"
           autoPlay
           loop
           muted
           playsInline
+          preload="metadata"
           className="w-full h-full object-cover scale-[1.02]"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/95 to-primary/80"></div>
@@ -117,10 +119,12 @@ export default function HeroSection({ currentCity, onOpenBookingWizard }: HeroSe
             <div className="relative rounded-xl overflow-hidden mb-6 h-48 md:h-52 bg-slate-950/60 border border-white/10 group shadow-lg">
               <video
                 src="https://uxxkrliutucqfaoortdb.supabase.co/storage/v1/object/public/web%20urge%20ya/videos/mochilaurgeyacompleto.mp4"
+                poster="https://uxxkrliutucqfaoortdb.supabase.co/storage/v1/object/public/web%20urge%20ya/inagenes/IMG-20260714-WA0009.jpg"
                 autoPlay
                 loop
                 muted
                 playsInline
+                preload="metadata"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/30 to-transparent flex items-end p-4">

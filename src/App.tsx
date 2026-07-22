@@ -268,8 +268,12 @@ export default function App() {
             {/* Poster Card 1 */}
             <div className="group relative rounded-2xl overflow-hidden shadow-lg h-80 md:h-[380px] border border-slate-100">
               <img
-                src="https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=800&q=80"
+                src="https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=600&q=75"
                 alt="Legalizaciones Luz y Gas"
+                loading="lazy"
+                decoding="async"
+                width="600"
+                height="400"
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent flex flex-col justify-end p-6 md:p-8">
@@ -295,8 +299,12 @@ export default function App() {
             {/* Poster Card 2 */}
             <div className="group relative rounded-2xl overflow-hidden shadow-lg h-80 md:h-[380px] border border-slate-100">
               <img
-                src="https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&w=800&q=80"
+                src="https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&w=600&q=75"
                 alt="Servicio de fontanería"
+                loading="lazy"
+                decoding="async"
+                width="600"
+                height="400"
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent flex flex-col justify-end p-6 md:p-8">
@@ -385,8 +393,12 @@ export default function App() {
 
           <div className="relative rounded-2xl overflow-hidden shadow-2xl h-80 md:h-96 lg:h-[450px]">
             <img
-              src="https://images.unsplash.com/photo-1621905251189-08b45d6a268e?auto=format&fit=crop&w=800&q=80"
+              src="https://images.unsplash.com/photo-1621905251189-08b45d6a268e?auto=format&fit=crop&w=600&q=75"
               alt="Servicio técnico Urge Ya"
+              loading="lazy"
+              decoding="async"
+              width="600"
+              height="450"
               className="absolute inset-0 w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-slate-950/20"></div>

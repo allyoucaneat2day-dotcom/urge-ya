@@ -99,6 +99,7 @@ export default function Navbar({ currentCity, onCityChange, onServiceSelect }: N
             loop
             muted
             playsInline
+            preload="metadata"
             className="h-10 w-10 object-cover rounded-lg shadow-sm"
           />
           <span className="text-xl font-extrabold text-primary tracking-tight italic">URGE <span className="text-secondary">YA</span></span>
