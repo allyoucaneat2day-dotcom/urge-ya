@@ -37,7 +37,7 @@ export const SERVICES: ServiceDetail[] = [
     iconName: 'Droplet',
     tagline: 'Fugas de agua, desatascos, grifería y sanitarios',
     longDescription: 'Ofrecemos soluciones rápidas y duraderas para cualquier problema de agua, desagües o humedad en su hogar o local comercial.',
-    imageUrl: 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format,compress&fit=crop&w=600&q=70&fm=webp',
+    imageUrl: 'https://uxxkrliutucqfaoortdb.supabase.co/storage/v1/object/public/web%20urge%20ya/inagenes/Wrench_tightening_pipe_under_sink-ezgif.com-jpg-to-webp-converter.webp',
     commonIssues: [
       { id: 'f_leak', name: 'Reparación de fugas de agua y humedades', avgPrice: 'Desde 45€', duration: '30-60 min', description: 'Localización y sellado rápido de tuberías rotas o goteras.' },
       { id: 'f_clog', name: 'Desatasco de tuberías y fregaderos', avgPrice: 'Desde 50€', duration: '40-80 min', description: 'Limpieza profesional de obstrucciones persistentes en desagües.' },
@@ -51,7 +51,7 @@ export const SERVICES: ServiceDetail[] = [
     iconName: 'Bolt',
     tagline: 'Apagones, boletines, cortocircuitos e instalaciones',
     longDescription: 'Técnicos electricistas autorizados para solucionar averías de luz, aumentos de potencia, instalaciones nuevas y reformas eléctricas.',
-    imageUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a268e?auto=format,compress&fit=crop&w=600&q=70&fm=webp',
+    imageUrl: 'https://uxxkrliutucqfaoortdb.supabase.co/storage/v1/object/public/web%20urge%20ya/inagenes/Electrician_using_multimeter_on__202607231421-ezgif.com-jpg-to-webp-converter.webp',
     commonIssues: [
       { id: 'e_blackout', name: 'Reparación de apagones y cortocircuitos', avgPrice: 'Desde 50€', duration: '30-70 min', description: 'Diagnóstico urgente para restablecer el suministro eléctrico seguro.' },
       { id: 'e_panel', name: 'Cambios de cuadro eléctrico / fusibles', avgPrice: 'Desde 120€', duration: '1-2 horas', description: 'Modernización del cuadro de distribución con diferenciales de seguridad.' },
@@ -65,7 +65,7 @@ export const SERVICES: ServiceDetail[] = [
     iconName: 'Flame',
     tagline: 'Instalación y reparación de termos, calderas y calentadores',
     longDescription: 'Especialistas multimarca en sistemas de calefacción y agua caliente sanitaria. Solucionamos fallos de encendido, fugas de gas o goteos.',
-    imageUrl: 'https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format,compress&fit=crop&w=600&q=70&fm=webp',
+    imageUrl: 'https://uxxkrliutucqfaoortdb.supabase.co/storage/v1/object/public/web%20urge%20ya/inagenes/Calderas_electric_water_heater_h_202607231433-ezgif.com-jpg-to-webp-converter.webp',
     commonIssues: [
       { id: 'c_repair', name: 'Reparación de termo eléctrico o caldera', avgPrice: 'Desde 65€', duration: '45-90 min', description: 'Reparación de resistencias, termostatos, placas electrónicas o vasos de expansión.' },
       { id: 'c_install', name: 'Instalación de caldera / termo nuevo', avgPrice: 'Desde 180€', duration: '2-4 horas', description: 'Montaje y puesta en marcha de equipos de las principales marcas con garantía.' },
@@ -78,7 +78,7 @@ export const SERVICES: ServiceDetail[] = [
     iconName: 'Wind',
     tagline: 'Cargas de gas, limpieza de filtros y averías de climatización',
     longDescription: 'Mantenga su hogar a la temperatura ideal. Realizamos cargas de refrigerante ecológico, desinfección y reparación de compresores.',
-    imageUrl: 'https://images.unsplash.com/photo-1563161431-154a482d77a8?auto=format,compress&fit=crop&w=600&q=70&fm=webp',
+    imageUrl: 'https://uxxkrliutucqfaoortdb.supabase.co/storage/v1/object/public/web%20urge%20ya/inagenes/an_air_conditioner_2K_202607231435-ezgif.com-jpg-to-webp-converter.webp',
     commonIssues: [
       { id: 'a_gas', name: 'Carga de gas refrigerante', avgPrice: 'Desde 70€', duration: '40-80 min', description: 'Recarga de gas R32 o R410A con previa prueba de estanqueidad para evitar fugas.' },
       { id: 'a_clean', name: 'Limpieza de filtros y desinfección', avgPrice: 'Desde 45€', duration: '30-50 min', description: 'Tratamiento antibacterias para eliminar malos olores y mejorar la calidad del aire.' },
@@ -91,7 +91,7 @@ export const SERVICES: ServiceDetail[] = [
     iconName: 'Activity',
     tagline: 'Corrección de anomalías, instalaciones y certificados de gas',
     longDescription: 'Técnicos certificados para solventar problemas detectados en la inspección periódica de los 5 años, fugas en llaves y adaptaciones.',
-    imageUrl: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format,compress&fit=crop&w=600&q=70&fm=webp',
+    imageUrl: 'https://uxxkrliutucqfaoortdb.supabase.co/storage/v1/object/public/web%20urge%20ya/inagenes/Technician_fixing_gas_leak_kitchen_202607231441-ezgif.com-jpg-to-webp-converter.webp',
     commonIssues: [
       { id: 'g_anomaly', name: 'Corrección de anomalías (Inspección de 5 años)', avgPrice: 'Desde 80€', duration: '1-2 horas', description: 'Subsanación inmediata de defectos leves o graves reportados por la distribuidora.' },
       { id: 'g_leak', name: 'Reparación de fugas de gas y llaves de paso', avgPrice: 'Desde 75€', duration: '45-90 min', description: 'Detección precisa mediante manómetro y sustitución de uniones o llaves en mal estado.' },
@@ -104,7 +104,7 @@ export const SERVICES: ServiceDetail[] = [
     iconName: 'Wrench',
     tagline: 'Pintura, paletería, montaje de muebles y reparaciones del hogar',
     longDescription: 'Para todas esas pequeñas tareas domésticas que requieren destreza y herramientas profesionales. Soluciones integrales.',
-    imageUrl: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format,compress&fit=crop&w=600&q=70&fm=webp',
+    imageUrl: 'https://uxxkrliutucqfaoortdb.supabase.co/storage/v1/object/public/web%20urge%20ya/inagenes/manitas-ezgif.com-jpg-to-webp-converter.webp',
     commonIssues: [
       { id: 'm_furniture', name: 'Montaje de muebles (Ikea, Leroy, etc.)', avgPrice: 'Desde 40€', duration: '1-3 horas', description: 'Ensamblaje profesional de armarios, cómodas, mesas o estanterías.' },
       { id: 'm_hang', name: 'Colgar cuadros, soportes TV, cortinas o espejos', avgPrice: 'Desde 30€', duration: '20-40 min', description: 'Fijación segura y nivelada en todo tipo de paredes (pladur, ladrillo, etc.).' },

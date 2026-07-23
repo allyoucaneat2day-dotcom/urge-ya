@@ -92,7 +92,7 @@ export default function Navbar({ currentCity, onCityChange, onServiceSelect }: N
       {/* Main Navbar Bar */}
       <div className="max-w-7xl mx-auto px-4 py-3.5 flex justify-between items-center">
         {/* Brand/Logo - Matches exact logo look in design HTML */}
-        <a href="#" className="flex items-center gap-3 font-display font-extrabold text-primary text-xl tracking-tight">
+        <a href="#" className="flex items-center gap-3 font-display font-extrabold text-primary text-xl sm:text-2xl tracking-tight">
           <video
             src="https://uxxkrliutucqfaoortdb.supabase.co/storage/v1/object/public/web%20urge%20ya/videos/urgeyalogotipovideo.webm"
             autoPlay
@@ -100,9 +100,9 @@ export default function Navbar({ currentCity, onCityChange, onServiceSelect }: N
             muted
             playsInline
             preload="metadata"
-            className="h-10 w-10 object-cover rounded-lg shadow-sm"
+            className="h-12 w-12 sm:h-14 sm:w-14 object-cover rounded-xl shadow-sm border border-slate-100 shrink-0"
           />
-          <span className="text-xl font-extrabold text-primary tracking-tight italic">URGE <span className="text-secondary">YA</span></span>
+          <span className="text-xl sm:text-2xl font-extrabold text-primary tracking-tight italic whitespace-nowrap">URGE <span className="text-secondary">YA</span></span>
         </a>
 
         {/* Desktop Links - Matches hover style in design HTML */}

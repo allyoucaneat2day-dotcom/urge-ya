@@ -11,7 +11,10 @@ import {
   HeartHandshake,
   Activity,
   ArrowRight,
-  BookOpen
+  BookOpen,
+  Maximize2,
+  X,
+  ZoomIn
 } from 'lucide-react';
 
 import { CityId, ServiceId, ServiceIssue, BookingRequest, Review } from './types';
@@ -36,8 +39,24 @@ export default function App() {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [activeBooking, setActiveBooking] = useState<BookingRequest | null>(null);
   const [reviews, setReviews] = useState<Review[]>(INITIAL_REVIEWS);
+  const [isVanModalOpen, setIsVanModalOpen] = useState(false);
 
   const currentCity = CITIES[currentCityId];
+  const phone = currentCity?.phone || '664065855';
+  const phoneFormatted = currentCity?.phoneFormatted || '664 065 855';
+  const rawWa = currentCity?.whatsappNumber || '+34664065855';
+  const cleanWa = rawWa.replace(/[^0-9]/g, '');
+
+  // ESC key handler for Van image modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isVanModalOpen) {
+        setIsVanModalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isVanModalOpen]);
 
   // Load state from localStorage on init
   useEffect(() => {
@@ -255,6 +274,7 @@ export default function App() {
         selectedServiceId={selectedServiceId}
         onServiceSelect={handleServiceSelect}
         onIssueSelect={handleIssueSelect}
+        currentCity={currentCity}
       />
 
       {/* 6. Legalizations & Certificates spotlight poster */}
@@ -391,20 +411,130 @@ export default function App() {
             </div>
           </div>
 
-          <div className="relative rounded-2xl overflow-hidden shadow-2xl h-80 md:h-96 lg:h-[450px]">
+          <div 
+            onClick={() => setIsVanModalOpen(true)}
+            className="relative rounded-2xl overflow-hidden shadow-2xl h-80 md:h-96 lg:h-[450px] cursor-pointer group/van border border-slate-200"
+            title="Haz clic para ver imagen de la furgoneta Urge Ya en pantalla completa"
+          >
             <img
-              src="https://images.unsplash.com/photo-1621905251189-08b45d6a268e?auto=format&fit=crop&w=600&q=75"
-              alt="Servicio técnico Urge Ya"
+              src="https://uxxkrliutucqfaoortdb.supabase.co/storage/v1/object/public/web%20urge%20ya/inagenes/Urge-Ya_van_driving_Barcelona_st_202607231537-ezgif.com-jpg-to-webp-converter.webp"
+              alt="Furgoneta de asistencia técnica Urge Ya"
               loading="lazy"
               decoding="async"
               width="600"
               height="450"
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/van:scale-105"
             />
-            <div className="absolute inset-0 bg-slate-950/20"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent flex flex-col justify-between p-6">
+              <div className="flex justify-end">
+                <span className="bg-slate-900/80 hover:bg-primary text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-lg border border-white/20 transition backdrop-blur-md group-hover/van:scale-105">
+                  <Maximize2 className="w-3.5 h-3.5 text-accent" />
+                  <span>🔍 Ampliar Foto</span>
+                </span>
+              </div>
+              <div>
+                <span className="inline-block bg-accent text-primary text-[10px] font-black uppercase px-2.5 py-1 rounded mb-2 shadow-sm">
+                  Unidades Móviles 24/7
+                </span>
+                <p className="text-white font-extrabold text-base md:text-lg">
+                  Furgonetas de Asistencia Técnica Urge Ya
+                </p>
+                <p className="text-slate-300 text-xs mt-1">
+                  Desplazamiento rápido e intervención urgente en {currentCity.name}. Haz clic para ampliar.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
+
+      {/* POP-UP MODAL LIGHTBOX FOR URGE YA VAN IMAGE */}
+      {isVanModalOpen && (
+        <div 
+          className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
+          onClick={() => setIsVanModalOpen(false)}
+        >
+          <div 
+            className="relative bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full max-h-[92vh] overflow-y-auto my-auto shadow-2xl flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="px-4 py-3 bg-slate-950 border-b border-slate-800 flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2.5 text-white">
+                <div className="p-2 bg-primary rounded-xl text-accent font-black text-xs">
+                  URGE YA
+                </div>
+                <div>
+                  <h4 className="font-extrabold text-sm sm:text-base leading-tight">
+                    Furgoneta de Asistencia Técnica 24H
+                  </h4>
+                  <p className="text-[11px] text-slate-400">
+                    Unidades móviles equipadas para intervenciones en {currentCity.name}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsVanModalOpen(false)}
+                className="p-1.5 bg-slate-800 hover:bg-rose-600 text-slate-300 hover:text-white rounded-xl transition cursor-pointer"
+                title="Cerrar (Esc)"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Image Area */}
+            <div className="relative flex-1 min-h-0 bg-black flex items-center justify-center overflow-hidden p-2 sm:p-4">
+              <img
+                src="https://uxxkrliutucqfaoortdb.supabase.co/storage/v1/object/public/web%20urge%20ya/inagenes/Urge-Ya_van_driving_Barcelona_st_202607231537-ezgif.com-jpg-to-webp-converter.webp"
+                alt="Furgoneta de asistencia técnica Urge Ya"
+                className="max-h-[60vh] sm:max-h-[65vh] w-auto max-w-full object-contain rounded-lg shadow-2xl"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+
+            {/* Modal Footer Controls */}
+            <div className="p-4 sm:p-5 bg-slate-950 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4 shrink-0">
+              <div>
+                <p className="text-xs text-slate-300 font-bold">
+                  ¿Necesitas asistencia urgente en {currentCity.name}?
+                </p>
+                <p className="text-[11px] text-slate-400 mt-0.5 max-w-xl">
+                  Nuestros técnicos homologados están en ruta continua con herramientas y recambios para solucionar cualquier avería urgente en menos de 30 minutos.
+                </p>
+              </div>
+
+              {/* Dual CTAs: Call & WhatsApp */}
+              <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full md:w-auto shrink-0">
+                <a
+                  href={`tel:${phone}`}
+                  className="w-full sm:w-auto px-4 py-2.5 bg-accent hover:bg-amber-400 text-primary rounded-xl text-xs font-black transition cursor-pointer shadow flex items-center justify-center gap-2 active:scale-95"
+                  title={`Llamar a ${phoneFormatted}`}
+                >
+                  <Phone className="w-4 h-4 text-primary shrink-0" />
+                  <span className="whitespace-nowrap">Llamar Ahora ({phoneFormatted})</span>
+                </a>
+
+                <a
+                  href={`https://wa.me/${cleanWa}?text=${encodeURIComponent(
+                    `Hola, solicito asistencia técnica urgente con unidad móvil en ${currentCity.name}.`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto px-4 py-2.5 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-xl text-xs font-extrabold transition cursor-pointer shadow flex items-center justify-center gap-2 active:scale-95"
+                  title="Enviar WhatsApp"
+                >
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.937 3.659 1.432 5.631 1.432h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                  </svg>
+                  <span className="whitespace-nowrap">WhatsApp 24H</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 8. Interactive Reviews section */}
       <ReviewsHub

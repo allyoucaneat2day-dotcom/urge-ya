@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
   Sparkles, Send, X, Phone, Check, AlertCircle, RefreshCw, 
   ChevronRight, User, Mic, MicOff, Volume2, VolumeX, MapPin, 
-  Clock, Shield, Image, Camera, RotateCcw 
+  Clock, Shield, Image, Camera, RotateCcw, Plus 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { SERVICES } from '../data';
@@ -36,8 +36,8 @@ const LANGUAGES = [
 
 const WELCOME_MESSAGES = {
   es: {
-    text: `¡Hola! Soy **LUNA**, tu **asistente de Urge-Ya para emergencias del hogar** en **{city}**. 🤖🔊\n\nEstoy preparada para responderte por voz de forma inmediata y gestionar tu avería urgente.\n\n📸 **¡NUEVA FUNCIÓN DISPONIBLE!** Ahora puedes **subir una foto de tu avería** (tuberías rotas, llaves atascadas, cables quemados o fugas) pulsando el botón de la cámara para que la analice de inmediato con Inteligencia Artificial.\n\nOfrezco soporte en **castellano, inglés, catalán y francés**.\n\nCuéntame, ¿tienes alguna emergencia con **fugas de agua**, **apagones de luz**, **cerrajería de urgencia** o **fallos en tu caldera**? O elige un idioma en la barra superior.`,
-    spoken: `Hola, soy LUNA, tu asistente de Urge-Ya para emergencias del hogar en {city}. Puedes subir una foto de tu avería pulsando el botón de la cámara para que la analice con Inteligencia Artificial. Cuéntame qué emergencia tienes o selecciona tu idioma.`
+    text: `Hola, soy LUNA. ¿En qué emergencia del hogar te puedo ayudar hoy?`,
+    spoken: `Hola, soy LUNA. ¿En qué emergencia del hogar te puedo ayudar hoy?`
   },
   en: {
     text: `Hello! I am **LUNA**, your **AI Voice Assistant** from **Urge Ya** in **{city}**. 🤖🔊\n\nI am ready to speak and understand your language (English, Spanish, Catalan, or French).\n\n📸 **NEW FEATURE!** You can now **upload/snap a photo of your breakdown** (leaking pipe, burned wire, stuck door) using the camera button, and I will instantly analyze the image using Gemini AI.\n\nHow can I help you with your **plumbing**, **electrical**, **locksmith**, or **boiler** emergency today?`,
@@ -360,8 +360,9 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
   }, [currentLang, currentCity.name]);
   
   const [inputValue, setInputValue] = useState('');
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [imageMime, setImageMime] = useState<string>('');
+  const [uploadedImages, setUploadedImages] = useState<Array<{ base64: string; mimeType: string }>>([]);
+  const [sessionImages, setSessionImages] = useState<string[]>([]);
+  const [totalSessionPhotosCount, setTotalSessionPhotosCount] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
@@ -425,6 +426,13 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
 
   const capturePhotoFromStream = () => {
     if (!videoRef.current) return;
+    if (uploadedImages.length >= 3) {
+      const msg = currentLang === 'en' ? "Maximum 3 photos allowed." : "Máximo 3 fotos alcanzado.";
+      setSpeechError(msg);
+      setTimeout(() => setSpeechError(null), 3000);
+      stopCameraStream();
+      return;
+    }
     const video = videoRef.current;
     const canvas = document.createElement('canvas');
     canvas.width = video.videoWidth || 640;
@@ -435,8 +443,12 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
       const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
       const parts = dataUrl.split(';base64,');
       if (parts.length === 2) {
-        setUploadedImage(parts[1]);
-        setImageMime('image/jpeg');
+        setUploadedImages(prev => [...prev, { base64: parts[1], mimeType: 'image/jpeg' }]);
+        setSessionImages(prev => {
+          if (prev.length >= 3) return prev;
+          return [...prev, dataUrl];
+        });
+        setTotalSessionPhotosCount(prev => prev + 1);
       }
     }
     stopCameraStream();
@@ -819,25 +831,57 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files: File[] = Array.from(e.target.files || []);
+    if (files.length === 0) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64Data = reader.result as string;
-      const parts = base64Data.split(';base64,');
-      if (parts.length === 2) {
-        setUploadedImage(parts[1]);
-        setImageMime(file.type);
-      }
-    };
-    reader.readAsDataURL(file);
+    const availableSlots = 3 - uploadedImages.length;
+    if (availableSlots <= 0) {
+      const msg = currentLang === 'en' ? "Maximum 3 photos allowed." : "Máximo 3 fotos alcanzado.";
+      setSpeechError(msg);
+      setTimeout(() => setSpeechError(null), 3000);
+      if (e.target) e.target.value = '';
+      return;
+    }
+
+    const filesToProcess = files.slice(0, availableSlots);
+
+    filesToProcess.forEach((file: File) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64Data = reader.result as string;
+        const parts = base64Data.split(';base64,');
+        if (parts.length === 2) {
+          setUploadedImages(prev => {
+            if (prev.length >= 3) return prev;
+            return [...prev, { base64: parts[1], mimeType: file.type || 'image/jpeg' }];
+          });
+          setSessionImages(prev => {
+            if (prev.length >= 3) return prev;
+            return [...prev, base64Data];
+          });
+          setTotalSessionPhotosCount(prev => prev + 1);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    if (e.target) e.target.value = '';
   };
 
   const handleSendMessage = async (text: string) => {
-    if (!text.trim() && !uploadedImage) return;
+    if (!text.trim() && uploadedImages.length === 0) return;
 
-    const messageText = text.trim() || (currentLang === 'en' ? "Please analyze this image" : "Por favor, analiza esta imagen");
+    const currentImages = [...uploadedImages];
+    const hasImages = currentImages.length > 0;
+
+    let defaultText = currentLang === 'en' ? "Please analyze this image" : "Por favor, analiza esta foto de mi avería";
+    if (currentImages.length > 1) {
+      defaultText = currentLang === 'en' 
+        ? `Please analyze these ${currentImages.length} images` 
+        : `Por favor, analiza estas ${currentImages.length} fotos de mi avería`;
+    }
+
+    const messageText = text.trim() || defaultText;
 
     // User message object
     const userMessage: Message = {
@@ -851,20 +895,10 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
     setInputValue('');
     setIsTyping(true);
 
-    const hasImage = !!uploadedImage;
-    const currentImg = uploadedImage;
-    const currentMime = imageMime;
+    // Reset active image uploads
+    setUploadedImages([]);
 
-    // Reset image upload states
-    setUploadedImage(null);
-    setImageMime('');
-
-    const detected = detectLanguage(messageText);
-    let targetLang = currentLang;
-    if (detected !== currentLang) {
-      targetLang = detected;
-      setCurrentLang(detected);
-    }
+    const targetLang = currentLang;
 
     try {
       let textResponse = '';
@@ -874,13 +908,12 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
 
       let usedModel = '';
 
-      if (hasImage) {
+      if (hasImages) {
         const res = await fetch('/api/gemini/analyze-image', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            imageBase64: currentImg,
-            mimeType: currentMime,
+            images: currentImages,
             currentCity,
             currentLang: targetLang,
             textPrompt: messageText,
@@ -1102,71 +1135,79 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
   };
 
   const handleWhatsAppClick = () => {
-    // 1. Gather Client Data safely with fallbacks
+    // 1. Gather client data from state
     const clientName = formData.name?.trim() || 'Cliente Urge-Ya';
     const clientPhone = formData.phone?.trim() || 'No facilitado';
     const clientAddress = formData.address?.trim() || `No facilitada (${currentCity?.name || 'España'})`;
     const serviceType = formData.type || selectedService?.name || 'Emergencia Técnica del Hogar';
 
-    // 2. Extract conversation summary / diagnosis from Luna
-    let problemSummary = '';
-    const userMsgs = messages.filter(m => m.sender === 'user').map(m => m.text).filter(Boolean);
-    const aiMsgs = messages.filter(m => m.sender === 'ai').map(m => m.text).filter(Boolean);
+    // 2. Gather chat problem description and messages
+    const userMsgs = messages.filter(m => m.sender === 'user').map(m => m.text.replace(/\*\*/g, '').trim()).filter(Boolean);
+    const aiMsgs = messages.filter(m => m.sender === 'ai' && m.id !== 'welcome').map(m => m.text.replace(/\*\*/g, '').trim()).filter(Boolean);
 
+    let problemDescription = '';
     if (userMsgs.length > 0) {
-      problemSummary = userMsgs.slice(-3).join(' / ');
-    } else if (selectedService) {
-      problemSummary = `Servicio urgente de ${selectedService.name}`;
+      problemDescription = userMsgs.join('\n  • ');
     } else {
-      problemSummary = 'Avería urgente reportada vía Luna IA';
+      problemDescription = `Servicio urgente de ${serviceType} en ${currentCity?.name || 'mi zona'}.`;
     }
-
-    problemSummary = problemSummary.replace(/\*\*/g, '').replace(/[\r\n]+/g, ' ').trim();
 
     let aiDiagnosis = '';
     if (aiMsgs.length > 0) {
       const lastAi = aiMsgs[aiMsgs.length - 1];
-      aiDiagnosis = lastAi.replace(/\*\*/g, '').replace(/[\r\n]+/g, ' ').trim().slice(0, 200);
-      if (lastAi.length > 200) aiDiagnosis += '...';
+      aiDiagnosis = lastAi.length > 280 ? lastAi.slice(0, 280) + '...' : lastAi;
     }
 
-    // 3. Handle photos/images uploaded
-    let photoInfo = '';
-    if (uploadedImage) {
-      photoInfo = `\n📸 *Fotografía de Avería:* Sí (Foto de la avería adjuntada en el chat con Luna IA - Formato ${imageMime || 'image/jpeg'})`;
-    }
+    // 3. Gather up to 3 uploaded images (URLs or Data URLs)
+    const currentUploadUrls = uploadedImages.map(img => `data:${img.mimeType};base64,${img.base64}`);
+    const allSessionPhotos = Array.from(new Set([...currentUploadUrls, ...sessionImages])).slice(0, 3);
 
-    // 4. Build complete formatted WhatsApp message
+    // 4. Construct formatted message
     const messageLines = [
       `🚨 *SOLICITUD DE TÉCNICO DE GUARDIA 24H - LUNA IA*`,
       ``,
-      `👤 *Cliente:* ${clientName}`,
-      `📞 *Teléfono de Contacto:* ${clientPhone}`,
-      `📍 *Dirección de Emergencia:* ${clientAddress}`,
-      `🛠️ *Tipo de Avería:* ${serviceType}`,
+      `📋 *DATOS DEL CLIENTE Y UBICACIÓN:*`,
+      `• *Nombre:* ${clientName}`,
+      `• *Teléfono:* ${clientPhone}`,
+      `• *Dirección:* ${clientAddress}`,
+      `• *Servicio Requerido:* ${serviceType}`,
+      `• *Delegación/Zona:* ${currentCity?.name || 'España'}`,
       ``,
-      `📝 *Resumen del Problema:*`,
-      `${problemSummary}`
+      `🛠️ *DESCRIPCIÓN DEL PROBLEMA (MENSAJES EN CHAT):*`,
+      `  • ${problemDescription}`
     ];
 
     if (aiDiagnosis) {
       messageLines.push(``);
-      messageLines.push(`🤖 *Diagnóstico Previsto por Luna IA:*`);
+      messageLines.push(`🤖 *DIAGNÓSTICO PREVIO DE LUNA IA:*`);
       messageLines.push(`${aiDiagnosis}`);
     }
 
-    if (photoInfo) {
-      messageLines.push(photoInfo);
+    messageLines.push(``);
+    messageLines.push(`📸 *IMÁGENES SUBIDAS DE LA AVERÍA (${allSessionPhotos.length}/3):*`);
+    if (allSessionPhotos.length > 0) {
+      allSessionPhotos.forEach((imgUrl, index) => {
+        if (imgUrl.startsWith('data:')) {
+          const mime = imgUrl.substring(5, imgUrl.indexOf(';') > 0 ? imgUrl.indexOf(';') : 15);
+          messageLines.push(`  • Imagen ${index + 1}: [Foto adjunta en chat LUNA (${mime})] (${imgUrl.slice(0, 80)}...)`);
+        } else {
+          messageLines.push(`  • Imagen ${index + 1}: ${imgUrl}`);
+        }
+      });
+    } else {
+      messageLines.push(`  • Ninguna imagen adjunta`);
     }
 
     messageLines.push(``);
-    messageLines.push(`⏰ *Delegación:* ${currentCity?.name || 'España'}`);
-    messageLines.push(`Solicito atención prioritaria y envío de un técnico de guardia a la mayor brevedad. ¡Muchas gracias!`);
+    messageLines.push(`⚡ Solicitamos atención prioritaria y envío de un técnico de guardia a la ubicación. ¡Muchas gracias!`);
 
     const fullMessage = messageLines.join('\n');
     const encodedText = encodeURIComponent(fullMessage);
 
-    const whatsappUrl = `https://wa.me/34664065855?text=${encodedText}`;
+    const rawWa = '+34664065855';
+    const cleanWa = rawWa.replace(/[^0-9]/g, '');
+    const whatsappUrl = `https://wa.me/${cleanWa}?text=${encodedText}`;
+
     window.open(whatsappUrl, '_blank');
   };
 
@@ -1330,80 +1371,6 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
                       </button>
                     ))}
                   </div>
-                </div>
-
-                {/* AI Model & Latency Selector Row */}
-                <div className="flex items-center justify-between px-3 sm:px-4 py-1.5 bg-slate-900 border-b border-slate-800/80 text-[10px] shrink-0 gap-1 overflow-x-auto">
-                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest shrink-0 flex items-center gap-1">
-                    <Sparkles className="w-3 h-3 text-amber-400" /> Modo IA:
-                  </span>
-                  <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={() => setAiMode('auto')}
-                      className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition flex items-center gap-1 cursor-pointer ${
-                        aiMode === 'auto'
-                          ? 'bg-indigo-600 text-white font-extrabold border border-indigo-400'
-                          : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
-                      }`}
-                      title="Modo Inteligente Equilibrado (gemini-3.6-flash)"
-                    >
-                      <span>🤖 Auto</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setAiMode('fast')}
-                      className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition flex items-center gap-1 cursor-pointer ${
-                        aiMode === 'fast'
-                          ? 'bg-amber-500 text-slate-950 font-extrabold border border-amber-300 shadow-sm'
-                          : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
-                      }`}
-                      title="Baja Latencia / Respuesta Ultra Rápida (gemini-3.1-flash-lite)"
-                    >
-                      <span>⚡ Baja Latencia</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setAiMode('thinking')}
-                      className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition flex items-center gap-1 cursor-pointer ${
-                        aiMode === 'thinking'
-                          ? 'bg-purple-600 text-white font-extrabold border border-purple-400 shadow-sm'
-                          : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
-                      }`}
-                      title="Pensamiento Profundo para Diagnósticos Complejos (gemini-3.1-pro-preview HIGH)"
-                    >
-                      <span>🧠 Pensamiento Profundo</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Selected Active Service Context Banner */}
-                <div className="px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-900/90 border-b border-indigo-500/20 flex items-center justify-between text-[11px] shrink-0 gap-2">
-                  <div className="flex items-center gap-1.5 text-indigo-300 font-semibold truncate">
-                    <span className="text-amber-400 font-extrabold text-[9px] sm:text-[10px] uppercase tracking-wider shrink-0">📍 Activo:</span>
-                    <span className="text-white font-bold bg-indigo-950 px-1.5 sm:px-2 py-0.5 rounded-md border border-indigo-500/30 text-[11px] shrink-0">
-                      {selectedService.name}
-                    </span>
-                    <span className="text-slate-400 hidden xs:inline text-[9px] sm:text-[10px] truncate">
-                      ({selectedService.commonIssues[0]?.avgPrice || 'Desde 35€'})
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const query = currentLang === 'en' 
-                        ? `What are the rates and prices for ${selectedService.name}?`
-                        : currentLang === 'ca'
-                        ? `Quines són les tarifes i preus de ${selectedService.name}?`
-                        : currentLang === 'fr'
-                        ? `Quels sont les tarifs et prix pour ${selectedService.name} ?`
-                        : `¿Cuáles son las tarifas y precios de ${selectedService.name}?`;
-                      setInputValue(query);
-                    }}
-                    className="text-[9px] sm:text-[10px] text-amber-300 hover:text-amber-200 bg-amber-500/10 hover:bg-amber-500/20 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg border border-amber-500/30 font-bold transition cursor-pointer shrink-0"
-                  >
-                    {currentLang === 'en' ? 'Check Rates' : currentLang === 'ca' ? 'Consultar Tarifes' : currentLang === 'fr' ? 'Consulter Tarifs' : 'Consultar Tarifas'}
-                  </button>
                 </div>
 
               {/* Speech Error Banner */}
@@ -1716,6 +1683,7 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
                     onChange={handleImageUpload}
                     accept="image/*"
                     capture="environment"
+                    multiple
                     className="hidden"
                   />
                   <input
@@ -1723,6 +1691,7 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
                     ref={fileInputRef}
                     onChange={handleImageUpload}
                     accept="image/*"
+                    multiple
                     className="hidden"
                   />
 
@@ -1759,37 +1728,64 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
                     className="flex items-center justify-center gap-1 py-1.5 px-2 bg-slate-950 hover:bg-slate-800 text-purple-300 hover:text-purple-200 border border-purple-500/30 hover:border-purple-400/60 rounded-xl text-[11px] font-bold transition cursor-pointer shadow-sm active:scale-95 text-center truncate"
                   >
                     <Image className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-                    <span className="truncate">{currentLang === 'en' ? 'Upload Photo' : currentLang === 'ca' ? 'Carregar Foto' : currentLang === 'fr' ? 'Charger Photo' : 'Subir Foto'}</span>
+                    <span className="truncate">{currentLang === 'en' ? 'Upload Photo' : currentLang === 'ca' ? 'Carregar Foto' : currentLang === 'fr' ? 'Charger Photo' : 'Subir Fotos'}</span>
                   </button>
                 </div>
 
-                {/* Image upload preview widget */}
-                {uploadedImage && (
-                  <div className="flex items-center gap-2 px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded-xl">
-                    <img
-                      src={`data:${imageMime};base64,${uploadedImage}`}
-                      alt="Preview"
-                      className="w-8 h-8 object-cover rounded-lg border border-slate-700"
-                      referrerPolicy="no-referrer"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[10px] text-slate-300 font-bold truncate">
-                        {currentLang === 'en' ? "Image attached" : "Imagen adjunta"}
-                      </p>
-                      <p className="text-[9px] text-slate-500 truncate">
-                        {currentLang === 'en' ? "Ready for Gemini analysis" : "Lista para ser analizada por Noelia"}
-                      </p>
+                {/* Image upload preview widget - Supporting up to 3 photos */}
+                {uploadedImages.length > 0 && (
+                  <div className="p-2.5 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
+                    <div className="flex items-center justify-between text-[10px]">
+                      <span className="text-indigo-300 font-bold flex items-center gap-1">
+                        <Camera className="w-3.5 h-3.5 text-indigo-400" />
+                        {currentLang === 'en' ? `Attached Photos (${uploadedImages.length}/3)` : `Fotos de Avería (${uploadedImages.length}/3)`}
+                      </span>
+                      {uploadedImages.length < 3 ? (
+                        <span className="text-[9px] text-amber-400 font-semibold">
+                          {currentLang === 'en' ? "Can add up to 3 photos" : "Puedes subir hasta 3 fotos"}
+                        </span>
+                      ) : (
+                        <span className="text-[9px] text-emerald-400 font-semibold">
+                          {currentLang === 'en' ? "Max photos reached (3/3)" : "Máximo alcanzado (3/3 fotos)"}
+                        </span>
+                      )}
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setUploadedImage(null);
-                        setImageMime('');
-                      }}
-                      className="p-1 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-full cursor-pointer"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
+
+                    <div className="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar">
+                      {uploadedImages.map((img, idx) => (
+                        <div key={idx} className="relative group shrink-0">
+                          <img
+                            src={`data:${img.mimeType};base64,${img.base64}`}
+                            alt={`Preview ${idx + 1}`}
+                            className="w-12 h-12 object-cover rounded-lg border border-slate-700 shadow-md"
+                            referrerPolicy="no-referrer"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setUploadedImages(prev => prev.filter((_, i) => i !== idx))}
+                            className="absolute -top-1.5 -right-1.5 bg-slate-900 hover:bg-rose-600 text-slate-300 hover:text-white border border-slate-700 rounded-full p-0.5 shadow transition cursor-pointer"
+                            title="Eliminar esta foto"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                          <span className="absolute bottom-0 left-0 bg-slate-950/80 text-white text-[8px] font-black px-1 rounded-tr-md">
+                            #{idx + 1}
+                          </span>
+                        </div>
+                      ))}
+
+                      {uploadedImages.length < 3 && (
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="w-12 h-12 rounded-lg border border-dashed border-indigo-500/40 hover:border-indigo-400 bg-indigo-500/5 hover:bg-indigo-500/10 flex flex-col items-center justify-center text-indigo-300 transition cursor-pointer shrink-0"
+                          title="Añadir otra foto"
+                        >
+                          <Plus className="w-4 h-4 text-indigo-400" />
+                          <span className="text-[8px] font-bold">+ Foto</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 )}
 
@@ -1825,7 +1821,7 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
 
                   <button
                     type="submit"
-                    disabled={!inputValue.trim() && !uploadedImage}
+                    disabled={!inputValue.trim() && uploadedImages.length === 0}
                     className="p-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center shrink-0"
                   >
                     <Send className="w-4 h-4" />

@@ -79,7 +79,9 @@ When the user asks about prices, rates, tariffs, estimates, or service details (
       
       const systemInstruction = `You are LUNA, a female expert 24/7 AI Voice Support Assistant for "Urge-Ya - Servicios Técnicos y Emergencias del Hogar 24h".
 You assist with home emergencies and handyman services.
-Your current target city context is: ${currentCity?.name || 'Spain'}. Always adapt your response language to match: "${currentLang || 'es'}".
+Your current target city context is: ${currentCity?.name || 'Spain'}.
+
+CRITICAL LANGUAGE MANDATE: You MUST write your ENTIRE response (both "text" and "spoken" fields) exclusively in ${currentLang === 'en' ? 'English' : currentLang === 'ca' ? 'Catalan' : currentLang === 'fr' ? 'French' : 'Spanish'} (code: "${currentLang || 'es'}"). Do NOT switch languages under any circumstances, even if the user's message is written in another language.
 
 When introducing yourself or responding in Spanish, always present yourself as: "Hola, soy LUNA, tu asistente de Urge-Ya para emergencias del hogar...". Always use feminine pronouns and grammatical forms when referring to yourself (e.g. "preparada", "asistenta", "atenta").
 ${serviceContextSection}
@@ -175,8 +177,19 @@ At the end of your analysis, always return a JSON object conforming strictly to 
   // API Route: analyze-image
   app.post("/api/gemini/analyze-image", async (req, res) => {
     try {
-      const { imageBase64, mimeType, currentCity, currentLang, textPrompt, selectedServiceDetails, mode = "auto" } = req.body;
-      if (!imageBase64) {
+      const { images, imageBase64, mimeType, currentCity, currentLang, textPrompt, selectedServiceDetails, mode = "auto" } = req.body;
+      
+      let imagesList: Array<{ imageBase64: string; mimeType: string }> = [];
+      if (Array.isArray(images) && images.length > 0) {
+        imagesList = images.map((img: any) => ({
+          imageBase64: img.base64 || img.imageBase64,
+          mimeType: img.mimeType || "image/jpeg"
+        }));
+      } else if (imageBase64) {
+        imagesList = [{ imageBase64, mimeType: mimeType || "image/jpeg" }];
+      }
+
+      if (imagesList.length === 0) {
         return res.status(400).json({ error: "No image provided." });
       }
 
@@ -192,22 +205,25 @@ At the end of your analysis, always return a JSON object conforming strictly to 
         thinkingConfig = { thinkingLevel: ThinkingLevel.HIGH };
       }
 
-      const imagePart = {
+      const imageParts = imagesList.map((img) => ({
         inlineData: {
-          mimeType: mimeType || "image/jpeg",
-          data: imageBase64
+          mimeType: img.mimeType || "image/jpeg",
+          data: img.imageBase64
         }
-      };
+      }));
 
-      const promptText = textPrompt || "Analyze this image and identify if there is a home emergency. Propose immediate troubleshooting steps and whether a technician dispatch is recommended.";
+      const numImages = imagesList.length;
+      const promptText = textPrompt || `Analiza esta(s) ${numImages} imagen(es) de la avería del hogar y proporciona un diagnóstico detallado de cada una.`;
       
       const serviceContext = selectedServiceDetails ? `\nThe user is currently consulting the service: ${selectedServiceDetails.name}. Base price for this service starts at ${selectedServiceDetails.commonIssues?.[0]?.avgPrice || '35€'}.` : '';
 
       const systemInstruction = `You are LUNA, a female expert 24/7 AI Voice Support Assistant and Technical Analyst for "Urge-Ya - Servicios Técnicos y Emergencias del Hogar 24h".
 You analyze images of home emergencies and breakdowns (e.g., leaking pipes, wet walls, spark/fuse boxes, locked doors, error codes on water heaters).
-Your current target city context is: ${currentCity?.name || 'Spain'}. Always adapt your response language to match: "${currentLang || 'es'}".${serviceContext}
+Your current target city context is: ${currentCity?.name || 'Spain'}.${serviceContext}
 
-When introducing yourself or responding in Spanish, always present yourself as: "Hola, soy LUNA, tu asistente de Urge-Ya para emergencias del hogar...". Always use feminine pronouns and grammatical forms when referring to yourself (e.g. "preparada", "asistenta", "atenta").
+CRITICAL LANGUAGE MANDATE: You MUST write your ENTIRE response (both "text" and "spoken" fields) exclusively in ${currentLang === 'en' ? 'English' : currentLang === 'ca' ? 'Catalan' : currentLang === 'fr' ? 'French' : 'Spanish'} (code: "${currentLang || 'es'}"). Do NOT switch languages under any circumstances, even if the user's message is written in another language.
+
+When introducing yourself or responding in Spanish, always present yourself as: "Hola, soy LUNA...". Always use feminine pronouns and grammatical forms when referring to yourself (e.g. "preparada", "asistenta", "atenta").
 
 ==================================================
 CRITICAL CORE DIRECTIVE
@@ -235,12 +251,12 @@ BUSINESS INFORMATION & PROTOCOLS
 - **Quotes**: Upfront transparent estimates are given on-site before the technician starts work.
 
 ==================================================
-MANDATORY RESPONSE STRUCTURE FOR IMAGE ANALYSIS
+MANDATORY RESPONSE STRUCTURE FOR IMAGE ANALYSIS (${numImages} IMAGE(S))
 ==================================================
-When analyzing an image of a home emergency or breakdown, your output in the "text" JSON field MUST ALWAYS follow this exact 3-step structured format:
+When analyzing ${numImages} image(s) of a home emergency or breakdown, your output in the "text" JSON field MUST ALWAYS follow this exact 3-step structured format:
 
 🔍 **1. Diagnóstico rápido:**
-[Explain concisely what the visual evidence shows, e.g. "Parece tratarse de una fuga activa en la junta del sifón del fregadero" or "Avería detectada en el cuadro eléctrico con salto de diferencial"]
+[You MUST provide a clear, specific, and empathetic short description of EACH of the ${numImages} photo(s) provided so the user feels completely understood and listened to! For example, if there are multiple images, explicitly write: "En la foto 1 se observa..., en la foto 2 veo..." or "Analizando las ${numImages} imágenes:..." detailing what is visually broken or damaged in each image.]
 
 🚨 **2. Acción de emergencia:**
 [Exactly 1 immediate, quick action step to prevent greater damage, e.g. "Cierra la llave de paso de agua de la vivienda inmediatamente" or "Baja el diferencial principal y no toques los cables expuestos"]
@@ -277,7 +293,7 @@ At the end of your analysis, always return a JSON object conforming strictly to 
         contents: [
           {
             parts: [
-              imagePart,
+              ...imageParts,
               { text: promptText }
             ]
           }
