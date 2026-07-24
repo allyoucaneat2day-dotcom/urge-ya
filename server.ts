@@ -314,6 +314,77 @@ At the end of your analysis, always return a JSON object conforming strictly to 
     }
   });
 
+  // Memory store for uploaded temporary emergency breakdown images
+  const imageStore = new Map<string, { buffer: Buffer; mimeType: string; createdAt: number }>();
+
+  // Clean up images older than 7 days every hour
+  setInterval(() => {
+    const now = Date.now();
+    const SevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+    for (const [id, data] of imageStore.entries()) {
+      if (now - data.createdAt > SevenDaysMs) {
+        imageStore.delete(id);
+      }
+    }
+  }, 60 * 60 * 1000);
+
+  // Endpoint: POST /api/upload-image
+  app.post("/api/upload-image", (req, res) => {
+    try {
+      const { imageBase64, mimeType = "image/jpeg" } = req.body;
+      if (!imageBase64) {
+        return res.status(400).json({ error: "Missing imageBase64" });
+      }
+
+      let pureBase64 = imageBase64;
+      let actualMime = mimeType;
+
+      if (imageBase64.startsWith("data:")) {
+        const match = imageBase64.match(/^data:(image\/[a-zA-Z0-9\+\-\.]+);base64,(.+)$/);
+        if (match) {
+          actualMime = match[1];
+          pureBase64 = match[2];
+        } else {
+          pureBase64 = imageBase64.split(",")[1] || imageBase64;
+        }
+      }
+
+      const buffer = Buffer.from(pureBase64, "base64");
+      const id = `averia_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+      const ext = actualMime.includes("png") ? "png" : actualMime.includes("webp") ? "webp" : "jpg";
+      const filename = `${id}.${ext}`;
+
+      imageStore.set(filename, { buffer, mimeType: actualMime, createdAt: Date.now() });
+
+      const protocol = req.headers["x-forwarded-proto"] || req.protocol || "https";
+      const host = req.headers["x-forwarded-host"] || req.get("host");
+      const fullUrl = `${protocol}://${host}/api/images/${filename}`;
+
+      res.json({
+        success: true,
+        id: filename,
+        url: fullUrl,
+      });
+    } catch (error: any) {
+      console.error("Error saving image:", error);
+      res.status(500).json({ error: "Failed to upload image" });
+    }
+  });
+
+  // Endpoint: GET /api/images/:id
+  app.get("/api/images/:id", (req, res) => {
+    const { id } = req.params;
+    const imageData = imageStore.get(id);
+
+    if (!imageData) {
+      return res.status(404).send("Imagen no encontrada o expirada");
+    }
+
+    res.setHeader("Content-Type", imageData.mimeType);
+    res.setHeader("Cache-Control", "public, max-age=86400");
+    res.send(imageData.buffer);
+  });
+
   // Serve static files or Vite middleware
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({

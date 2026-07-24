@@ -363,6 +363,7 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
   const [uploadedImages, setUploadedImages] = useState<Array<{ base64: string; mimeType: string }>>([]);
   const [sessionImages, setSessionImages] = useState<string[]>([]);
   const [totalSessionPhotosCount, setTotalSessionPhotosCount] = useState<number>(0);
+  const [isUploadingForWA, setIsUploadingForWA] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
@@ -1134,81 +1135,138 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
     speakText(confirmSpoken);
   };
 
-  const handleWhatsAppClick = () => {
-    // 1. Gather client data from state
-    const clientName = formData.name?.trim() || 'Cliente Urge-Ya';
-    const clientPhone = formData.phone?.trim() || 'No facilitado';
-    const clientAddress = formData.address?.trim() || `No facilitada (${currentCity?.name || 'España'})`;
-    const serviceType = formData.type || selectedService?.name || 'Emergencia Técnica del Hogar';
+  const handleWhatsAppClick = async () => {
+    if (isUploadingForWA) return;
+    setIsUploadingForWA(true);
 
-    // 2. Gather chat problem description and messages
-    const userMsgs = messages.filter(m => m.sender === 'user').map(m => m.text.replace(/\*\*/g, '').trim()).filter(Boolean);
-    const aiMsgs = messages.filter(m => m.sender === 'ai' && m.id !== 'welcome').map(m => m.text.replace(/\*\*/g, '').trim()).filter(Boolean);
+    try {
+      // 1. Gather client data from state
+      const clientName = formData.name?.trim() || 'Cliente Urge-Ya';
+      const clientPhone = formData.phone?.trim() || 'No facilitado';
+      const clientAddress = formData.address?.trim() || `No facilitada (${currentCity?.name || 'España'})`;
+      const serviceType = formData.type || selectedService?.name || 'Emergencia Técnica del Hogar';
 
-    let problemDescription = '';
-    if (userMsgs.length > 0) {
-      problemDescription = userMsgs.join('\n  • ');
-    } else {
-      problemDescription = `Servicio urgente de ${serviceType} en ${currentCity?.name || 'mi zona'}.`;
-    }
+      // 2. Gather chat problem description and messages
+      const userMsgs = messages.filter(m => m.sender === 'user').map(m => m.text.replace(/\*\*/g, '').trim()).filter(Boolean);
+      const aiMsgs = messages.filter(m => m.sender === 'ai' && m.id !== 'welcome').map(m => m.text.replace(/\*\*/g, '').trim()).filter(Boolean);
 
-    let aiDiagnosis = '';
-    if (aiMsgs.length > 0) {
-      const lastAi = aiMsgs[aiMsgs.length - 1];
-      aiDiagnosis = lastAi.length > 280 ? lastAi.slice(0, 280) + '...' : lastAi;
-    }
+      let problemDescription = '';
+      if (userMsgs.length > 0) {
+        problemDescription = userMsgs.join('\n  • ');
+      } else {
+        problemDescription = `Servicio urgente de ${serviceType} en ${currentCity?.name || 'mi zona'}.`;
+      }
 
-    // 3. Gather up to 3 uploaded images (URLs or Data URLs)
-    const currentUploadUrls = uploadedImages.map(img => `data:${img.mimeType};base64,${img.base64}`);
-    const allSessionPhotos = Array.from(new Set([...currentUploadUrls, ...sessionImages])).slice(0, 3);
+      let aiDiagnosis = '';
+      if (aiMsgs.length > 0) {
+        const lastAi = aiMsgs[aiMsgs.length - 1];
+        aiDiagnosis = lastAi.length > 280 ? lastAi.slice(0, 280) + '...' : lastAi;
+      }
 
-    // 4. Construct formatted message
-    const messageLines = [
-      `🚨 *SOLICITUD DE TÉCNICO DE GUARDIA 24H - LUNA IA*`,
-      ``,
-      `📋 *DATOS DEL CLIENTE Y UBICACIÓN:*`,
-      `• *Nombre:* ${clientName}`,
-      `• *Teléfono:* ${clientPhone}`,
-      `• *Dirección:* ${clientAddress}`,
-      `• *Servicio Requerido:* ${serviceType}`,
-      `• *Delegación/Zona:* ${currentCity?.name || 'España'}`,
-      ``,
-      `🛠️ *DESCRIPCIÓN DEL PROBLEMA (MENSAJES EN CHAT):*`,
-      `  • ${problemDescription}`
-    ];
+      // 3. Process up to 3 uploaded images and upload base64 ones to server to get real public URLs
+      const currentUploadUrls = uploadedImages.map(img => `data:${img.mimeType};base64,${img.base64}`);
+      const allSessionPhotos = Array.from(new Set([...currentUploadUrls, ...sessionImages])).slice(0, 3);
 
-    if (aiDiagnosis) {
-      messageLines.push(``);
-      messageLines.push(`🤖 *DIAGNÓSTICO PREVIO DE LUNA IA:*`);
-      messageLines.push(`${aiDiagnosis}`);
-    }
+      const publicPhotoUrls: string[] = [];
+      const fileObjectsToShare: File[] = [];
 
-    messageLines.push(``);
-    messageLines.push(`📸 *IMÁGENES SUBIDAS DE LA AVERÍA (${allSessionPhotos.length}/3):*`);
-    if (allSessionPhotos.length > 0) {
-      allSessionPhotos.forEach((imgUrl, index) => {
-        if (imgUrl.startsWith('data:')) {
-          const mime = imgUrl.substring(5, imgUrl.indexOf(';') > 0 ? imgUrl.indexOf(';') : 15);
-          messageLines.push(`  • Imagen ${index + 1}: [Foto adjunta en chat LUNA (${mime})] (${imgUrl.slice(0, 80)}...)`);
-        } else {
-          messageLines.push(`  • Imagen ${index + 1}: ${imgUrl}`);
+      for (let i = 0; i < allSessionPhotos.length; i++) {
+        const imgData = allSessionPhotos[i];
+        if (imgData.startsWith('data:')) {
+          try {
+            // Upload to server endpoint to get a real public HTTP URL
+            const res = await fetch('/api/upload-image', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ imageBase64: imgData })
+            });
+            const data = await res.json();
+            if (data && data.url) {
+              publicPhotoUrls.push(data.url);
+            }
+
+            // Also convert to File object for native Web Share API
+            const blobRes = await fetch(imgData);
+            const blob = await blobRes.blob();
+            const file = new File([blob], `foto_averia_${i + 1}.jpg`, { type: blob.type || 'image/jpeg' });
+            fileObjectsToShare.push(file);
+          } catch (err) {
+            console.error('Error uploading image for WhatsApp:', err);
+          }
+        } else if (imgData.startsWith('http')) {
+          publicPhotoUrls.push(imgData);
         }
-      });
-    } else {
-      messageLines.push(`  • Ninguna imagen adjunta`);
+      }
+
+      // 4. Construct formatted message
+      const messageLines = [
+        `🚨 *SOLICITUD DE TÉCNICO DE GUARDIA 24H - LUNA IA*`,
+        ``,
+        `📋 *DATOS DEL CLIENTE Y UBICACIÓN:*`,
+        `• *Nombre:* ${clientName}`,
+        `• *Teléfono:* ${clientPhone}`,
+        `• *Dirección:* ${clientAddress}`,
+        `• *Servicio Requerido:* ${serviceType}`,
+        `• *Delegación/Zona:* ${currentCity?.name || 'España'}`,
+        ``,
+        `🛠️ *DESCRIPCIÓN DEL PROBLEMA (MENSAJES EN CHAT):*`,
+        `  • ${problemDescription}`
+      ];
+
+      if (aiDiagnosis) {
+        messageLines.push(``);
+        messageLines.push(`🤖 *DIAGNÓSTICO PREVIO DE LUNA IA:*`);
+        messageLines.push(`${aiDiagnosis}`);
+      }
+
+      messageLines.push(``);
+      messageLines.push(`📸 *FOTOS SUBIDAS DE LA AVERÍA (${publicPhotoUrls.length}/3):*`);
+      if (publicPhotoUrls.length > 0) {
+        publicPhotoUrls.forEach((photoUrl, index) => {
+          messageLines.push(`  • Foto ${index + 1}: ${photoUrl}`);
+        });
+      } else {
+        messageLines.push(`  • Ninguna imagen adjunta`);
+      }
+
+      messageLines.push(``);
+      messageLines.push(`⚡ Solicitamos atención prioritaria y envío de un técnico de guardia a la ubicación. ¡Muchas gracias!`);
+
+      const fullMessage = messageLines.join('\n');
+
+      // 5. Check if Native Web Share API with files is available (iOS / Android)
+      let sharedViaNative = false;
+      if (fileObjectsToShare.length > 0 && typeof navigator !== 'undefined' && (navigator as any).canShare) {
+        try {
+          if ((navigator as any).canShare({ files: fileObjectsToShare })) {
+            await navigator.share({
+              title: `Solicitud Urge Ya - ${clientName}`,
+              text: fullMessage,
+              files: fileObjectsToShare
+            });
+            sharedViaNative = true;
+          }
+        } catch (shareError) {
+          console.log('Web Share API was cancelled or unsupported, falling back to wa.me link:', shareError);
+        }
+      }
+
+      // 6. Fallback or direct open of wa.me link with public photo URLs
+      if (!sharedViaNative) {
+        const rawWa = '+34664065855';
+        const cleanWa = rawWa.replace(/[^0-9]/g, '');
+        const encodedText = encodeURIComponent(fullMessage);
+        const whatsappUrl = `https://wa.me/${cleanWa}?text=${encodedText}`;
+        window.open(whatsappUrl, '_blank');
+      }
+    } catch (error) {
+      console.error('Error handling WhatsApp dispatch:', error);
+      const rawWa = '+34664065855';
+      const cleanWa = rawWa.replace(/[^0-9]/g, '');
+      window.open(`https://wa.me/${cleanWa}`, '_blank');
+    } finally {
+      setIsUploadingForWA(false);
     }
-
-    messageLines.push(``);
-    messageLines.push(`⚡ Solicitamos atención prioritaria y envío de un técnico de guardia a la ubicación. ¡Muchas gracias!`);
-
-    const fullMessage = messageLines.join('\n');
-    const encodedText = encodeURIComponent(fullMessage);
-
-    const rawWa = '+34664065855';
-    const cleanWa = rawWa.replace(/[^0-9]/g, '');
-    const whatsappUrl = `https://wa.me/${cleanWa}?text=${encodedText}`;
-
-    window.open(whatsappUrl, '_blank');
   };
 
   const currentLabels = UI_LABELS[currentLang];
@@ -1524,13 +1582,23 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
 
                         <button
                           type="button"
+                          disabled={isUploadingForWA}
                           onClick={handleWhatsAppClick}
-                          className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white font-extrabold py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-md shadow-emerald-600/20 transition cursor-pointer active:scale-98 flex items-center justify-center gap-2"
+                          className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white font-extrabold py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-md shadow-emerald-600/20 transition cursor-pointer active:scale-98 flex items-center justify-center gap-2 disabled:opacity-75"
                         >
-                          <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0">
-                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.937 3.659 1.432 5.631 1.432h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path>
-                          </svg>
-                          <span>ENVIAR FICHA COMPLETA A WHATSAPP</span>
+                          {isUploadingForWA ? (
+                            <>
+                              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0" />
+                              <span>PREPARANDO IMÁGENES Y WHATSAPP...</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.937 3.659 1.432 5.631 1.432h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path>
+                              </svg>
+                              <span>ENVIAR FICHA COMPLETA A WHATSAPP</span>
+                            </>
+                          )}
                         </button>
                       </div>
                     </form>
@@ -1568,13 +1636,23 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
 
                     <div className="space-y-2 pt-1">
                       <button
+                        disabled={isUploadingForWA}
                         onClick={handleWhatsAppClick}
-                        className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white py-2.5 rounded-xl text-xs font-black transition cursor-pointer flex items-center justify-center gap-2 shadow-md uppercase tracking-wider"
+                        className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white py-2.5 rounded-xl text-xs font-black transition cursor-pointer flex items-center justify-center gap-2 shadow-md uppercase tracking-wider disabled:opacity-75"
                       >
-                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0">
-                          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.937 3.659 1.432 5.631 1.432h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path>
-                        </svg>
-                        <span>ABRIR EN WHATSAPP (34664065855)</span>
+                        {isUploadingForWA ? (
+                          <>
+                            <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0" />
+                            <span>ABRIENDO WHATSAPP...</span>
+                          </>
+                        ) : (
+                          <>
+                            <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0">
+                              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.937 3.659 1.432 5.631 1.432h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path>
+                            </svg>
+                            <span>ABRIR EN WHATSAPP (34664065855)</span>
+                          </>
+                        )}
                       </button>
 
                       <div className="flex gap-2">
