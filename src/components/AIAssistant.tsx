@@ -34,6 +34,101 @@ const LANGUAGES = [
   { code: 'fr' as const, name: 'FRA', flag: '🇫🇷', label: 'Français' }
 ];
 
+const WA_TEMPLATE_LABELS = {
+  es: {
+    header: `🚨 *SOLICITUD DE TÉCNICO DE GUARDIA 24H - LUNA IA*`,
+    clientSection: `📋 *DATOS DEL CLIENTE Y UBICACIÓN:*`,
+    nameLabel: `• *Nombre:*`,
+    phoneLabel: `• *Teléfono:*`,
+    addressLabel: `• *Dirección:*`,
+    serviceLabel: `• *Servicio Requerido:*`,
+    zoneLabel: `• *Delegación/Zona:*`,
+    problemSection: `🛠️ *DESCRIPCIÓN DEL PROBLEMA (MENSAJES EN CHAT):*`,
+    defaultProblem: (service: string, city: string) => `Servicio urgente de ${service} en ${city}.`,
+    diagnosisSection: `🤖 *DIAGNÓSTICO PREVIO DE LUNA IA:*`,
+    photosSection: (count: number) => `📸 *FOTOS SUBIDAS DE LA AVERÍA (${count}/3):*`,
+    photoItem: (index: number, url: string) => `  • Foto ${index + 1}: ${url}`,
+    noPhotos: `  • Ninguna imagen adjunta`,
+    footer: `⚡ Solicitamos atención prioritaria y envío de un técnico de guardia a la ubicación. ¡Muchas gracias!`,
+    defaultName: 'Cliente Urge-Ya',
+    defaultPhone: 'No facilitado',
+    defaultAddress: 'No facilitada',
+    defaultService: 'Emergencia Técnica del Hogar',
+    btnSendFull: 'ENVIAR FICHA COMPLETA A WHATSAPP',
+    btnPreparing: 'PREPARANDO IMÁGENES Y WHATSAPP...',
+    btnOpenWa: 'ABRIR EN WHATSAPP (+34664065855)',
+  },
+  en: {
+    header: `🚨 *24/7 ON-CALL TECHNICIAN DISPATCH - LUNA AI*`,
+    clientSection: `📋 *CLIENT DETAILS & LOCATION:*`,
+    nameLabel: `• *Name:*`,
+    phoneLabel: `• *Phone:*`,
+    addressLabel: `• *Address:*`,
+    serviceLabel: `• *Required Service:*`,
+    zoneLabel: `• *Zone/City:*`,
+    problemSection: `🛠️ *PROBLEM DESCRIPTION (CHAT MESSAGES):*`,
+    defaultProblem: (service: string, city: string) => `Urgent ${service} service in ${city}.`,
+    diagnosisSection: `🤖 *LUNA AI PREVIOUS DIAGNOSIS:*`,
+    photosSection: (count: number) => `📸 *UPLOADED DAMAGE PHOTOS (${count}/3):*`,
+    photoItem: (index: number, url: string) => `  • Photo ${index + 1}: ${url}`,
+    noPhotos: `  • No attached images`,
+    footer: `⚡ We request priority attention and dispatch of an on-call technician to the location. Thank you very much!`,
+    defaultName: 'Urge-Ya Client',
+    defaultPhone: 'Not provided',
+    defaultAddress: 'Not provided',
+    defaultService: 'Home Technical Emergency',
+    btnSendFull: 'SEND FULL SHEET TO WHATSAPP',
+    btnPreparing: 'PREPARING IMAGES AND WHATSAPP...',
+    btnOpenWa: 'OPEN IN WHATSAPP (+34664065855)',
+  },
+  ca: {
+    header: `🚨 *SOL·LICITUD DE TÈCNIC DE GUÀRDIA 24H - LUNA IA*`,
+    clientSection: `📋 *DADES DEL CLIENT I UBICACIÓ:*`,
+    nameLabel: `• *Nom:*`,
+    phoneLabel: `• *Telèfon:*`,
+    addressLabel: `• *Adreça:*`,
+    serviceLabel: `• *Servei Requerit:*`,
+    zoneLabel: `• *Delegació/Zona:*`,
+    problemSection: `🛠️ *DESCRIPCIÓ DEL PROBLEMA (MISSATGES DE CHAT):*`,
+    defaultProblem: (service: string, city: string) => `Servei urgent de ${service} a ${city}.`,
+    diagnosisSection: `🤖 *DIAGNÒSTIC PREVI DE LUNA IA:*`,
+    photosSection: (count: number) => `📸 *FOTOS PENJADES DE L'AVARIA (${count}/3):*`,
+    photoItem: (index: number, url: string) => `  • Foto ${index + 1}: ${url}`,
+    noPhotos: `  • Cap imatge adjunta`,
+    footer: `⚡ Sol·licitem atenció prioritària i enviament d'un tècnic de guàrdia a la ubicació. Moltes gràcies!`,
+    defaultName: 'Client Urge-Ya',
+    defaultPhone: 'No facilitat',
+    defaultAddress: 'No facilitada',
+    defaultService: 'Emergència Tècnica de la Llar',
+    btnSendFull: 'ENVIAR FITXA COMPLETA A WHATSAPP',
+    btnPreparing: 'PREPARANT IMATGES I WHATSAPP...',
+    btnOpenWa: 'OBRIR A WHATSAPP (+34664065855)',
+  },
+  fr: {
+    header: `🚨 *DEMANDE DE TECHNICIEN DE GARDE 24H/24 - LUNA IA*`,
+    clientSection: `📋 *COORDONNÉES CLIENT ET LOCALISATION :*`,
+    nameLabel: `• *Nom :*`,
+    phoneLabel: `• *Téléphone :*`,
+    addressLabel: `• *Adresse :*`,
+    serviceLabel: `• *Service Requis :*`,
+    zoneLabel: `• *Délégation/Zone :*`,
+    problemSection: `🛠️ *DESCRIPTION DU PROBLÈME (MESSAGES DU CHAT) :*`,
+    defaultProblem: (service: string, city: string) => `Service d'urgence ${service} à ${city}.`,
+    diagnosisSection: `🤖 *DIAGNOSTIC PRÉALABLE DE LUNA IA :*`,
+    photosSection: (count: number) => `📸 *PHOTOS DE LA PANNE TÉLÉCHARGÉES (${count}/3) :*`,
+    photoItem: (index: number, url: string) => `  • Photo ${index + 1} : ${url}`,
+    noPhotos: `  • Aucune image jointe`,
+    footer: `⚡ Nous demandons une intervention prioritaire et l'envoi d'un technicien de garde sur place. Merci beaucoup !`,
+    defaultName: 'Client Urge-Ya',
+    defaultPhone: 'Non fourni',
+    defaultAddress: 'Non fournie',
+    defaultService: 'Urgence Technique Domestique',
+    btnSendFull: 'ENVOYER FICHE COMPLÈTE SUR WHATSAPP',
+    btnPreparing: 'PRÉPARATION DES IMAGES ET WHATSAPP...',
+    btnOpenWa: 'OUVRIR DANS WHATSAPP (+34664065855)',
+  }
+};
+
 const WELCOME_MESSAGES = {
   es: {
     text: `Hola, soy LUNA. ¿En qué emergencia del hogar te puedo ayudar hoy?`,
@@ -1139,12 +1234,15 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
     if (isUploadingForWA) return;
     setIsUploadingForWA(true);
 
+    const labels = WA_TEMPLATE_LABELS[currentLang] || WA_TEMPLATE_LABELS.es;
+
     try {
       // 1. Gather client data from state
-      const clientName = formData.name?.trim() || 'Cliente Urge-Ya';
-      const clientPhone = formData.phone?.trim() || 'No facilitado';
-      const clientAddress = formData.address?.trim() || `No facilitada (${currentCity?.name || 'España'})`;
-      const serviceType = formData.type || selectedService?.name || 'Emergencia Técnica del Hogar';
+      const clientName = formData.name?.trim() || labels.defaultName;
+      const clientPhone = formData.phone?.trim() || labels.defaultPhone;
+      const clientAddress = formData.address?.trim() || `${labels.defaultAddress} (${currentCity?.name || 'España'})`;
+      const serviceType = formData.type || selectedService?.name || labels.defaultService;
+      const cityName = currentCity?.name || 'España';
 
       // 2. Gather chat problem description and messages
       const userMsgs = messages.filter(m => m.sender === 'user').map(m => m.text.replace(/\*\*/g, '').trim()).filter(Boolean);
@@ -1154,7 +1252,7 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
       if (userMsgs.length > 0) {
         problemDescription = userMsgs.join('\n  • ');
       } else {
-        problemDescription = `Servicio urgente de ${serviceType} en ${currentCity?.name || 'mi zona'}.`;
+        problemDescription = labels.defaultProblem(serviceType, cityName);
       }
 
       let aiDiagnosis = '';
@@ -1198,39 +1296,39 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
         }
       }
 
-      // 4. Construct formatted message
+      // 4. Construct formatted message in respective language
       const messageLines = [
-        `🚨 *SOLICITUD DE TÉCNICO DE GUARDIA 24H - LUNA IA*`,
+        labels.header,
         ``,
-        `📋 *DATOS DEL CLIENTE Y UBICACIÓN:*`,
-        `• *Nombre:* ${clientName}`,
-        `• *Teléfono:* ${clientPhone}`,
-        `• *Dirección:* ${clientAddress}`,
-        `• *Servicio Requerido:* ${serviceType}`,
-        `• *Delegación/Zona:* ${currentCity?.name || 'España'}`,
+        labels.clientSection,
+        `${labels.nameLabel} ${clientName}`,
+        `${labels.phoneLabel} ${clientPhone}`,
+        `${labels.addressLabel} ${clientAddress}`,
+        `${labels.serviceLabel} ${serviceType}`,
+        `${labels.zoneLabel} ${cityName}`,
         ``,
-        `🛠️ *DESCRIPCIÓN DEL PROBLEMA (MENSAJES EN CHAT):*`,
+        labels.problemSection,
         `  • ${problemDescription}`
       ];
 
       if (aiDiagnosis) {
         messageLines.push(``);
-        messageLines.push(`🤖 *DIAGNÓSTICO PREVIO DE LUNA IA:*`);
+        messageLines.push(labels.diagnosisSection);
         messageLines.push(`${aiDiagnosis}`);
       }
 
       messageLines.push(``);
-      messageLines.push(`📸 *FOTOS SUBIDAS DE LA AVERÍA (${publicPhotoUrls.length}/3):*`);
+      messageLines.push(labels.photosSection(publicPhotoUrls.length));
       if (publicPhotoUrls.length > 0) {
         publicPhotoUrls.forEach((photoUrl, index) => {
-          messageLines.push(`  • Foto ${index + 1}: ${photoUrl}`);
+          messageLines.push(labels.photoItem(index, photoUrl));
         });
       } else {
-        messageLines.push(`  • Ninguna imagen adjunta`);
+        messageLines.push(labels.noPhotos);
       }
 
       messageLines.push(``);
-      messageLines.push(`⚡ Solicitamos atención prioritaria y envío de un técnico de guardia a la ubicación. ¡Muchas gracias!`);
+      messageLines.push(labels.footer);
 
       const fullMessage = messageLines.join('\n');
 
@@ -1240,7 +1338,7 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
         try {
           if ((navigator as any).canShare({ files: fileObjectsToShare })) {
             await navigator.share({
-              title: `Solicitud Urge Ya - ${clientName}`,
+              title: `Urge Ya - ${clientName}`,
               text: fullMessage,
               files: fileObjectsToShare
             });
@@ -1589,14 +1687,14 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
                           {isUploadingForWA ? (
                             <>
                               <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0" />
-                              <span>PREPARANDO IMÁGENES Y WHATSAPP...</span>
+                              <span>{(WA_TEMPLATE_LABELS[currentLang] || WA_TEMPLATE_LABELS.es).btnPreparing}</span>
                             </>
                           ) : (
                             <>
                               <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0">
                                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.937 3.659 1.432 5.631 1.432h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path>
                               </svg>
-                              <span>ENVIAR FICHA COMPLETA A WHATSAPP</span>
+                              <span>{(WA_TEMPLATE_LABELS[currentLang] || WA_TEMPLATE_LABELS.es).btnSendFull}</span>
                             </>
                           )}
                         </button>
@@ -1643,14 +1741,14 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
                         {isUploadingForWA ? (
                           <>
                             <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0" />
-                            <span>ABRIENDO WHATSAPP...</span>
+                            <span>{(WA_TEMPLATE_LABELS[currentLang] || WA_TEMPLATE_LABELS.es).btnPreparing}</span>
                           </>
                         ) : (
                           <>
                             <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0">
                               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.937 3.659 1.432 5.631 1.432h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path>
                             </svg>
-                            <span>ABRIR EN WHATSAPP (34664065855)</span>
+                            <span>{(WA_TEMPLATE_LABELS[currentLang] || WA_TEMPLATE_LABELS.es).btnOpenWa}</span>
                           </>
                         )}
                       </button>
