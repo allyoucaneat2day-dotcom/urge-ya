@@ -241,55 +241,6 @@ export default function ServiceExplorer({
           </div>
         </div>
 
-        {/* Interactive 6-Image Showcase Gallery Grid */}
-        <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-md">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6 border-b border-slate-100 pb-4">
-            <div>
-              <h3 className="font-display text-xl font-extrabold text-slate-900 flex items-center gap-2">
-                <span>📸 Galería de Fotografías de nuestros Servicios</span>
-              </h3>
-              <p className="text-slate-500 text-xs mt-1">
-                Haz clic en cualquier imagen para abrirla en el visor emergente de alta resolución.
-              </p>
-            </div>
-            <span className="text-xs font-bold text-secondary bg-secondary/10 px-3 py-1 rounded-full w-fit">
-              6 Especialidades
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-            {SERVICES.map((service, idx) => (
-              <div
-                key={service.id}
-                onClick={() => setModalImageIndex(idx)}
-                className="group relative h-36 rounded-xl overflow-hidden border border-slate-200 cursor-pointer shadow-sm hover:shadow-lg hover:border-secondary transition-all"
-              >
-                <img
-                  src={service.imageUrl}
-                  alt={service.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent p-2.5 flex flex-col justify-between">
-                  <div className="flex justify-end">
-                    <span className="p-1 bg-slate-900/80 hover:bg-primary text-white rounded-md opacity-0 group-hover:opacity-100 transition shadow">
-                      <Maximize2 className="w-3.5 h-3.5 text-accent" />
-                    </span>
-                  </div>
-                  <div>
-                    <p className="text-white font-extrabold text-xs truncate">
-                      {service.name}
-                    </p>
-                    <p className="text-accent text-[10px] font-medium truncate">
-                      Ver foto en HD 🔍
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
       </div>
 
       {/* POP-UP SCREEN / LIGHTBOX MODAL */}

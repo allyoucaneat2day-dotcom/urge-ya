@@ -31,12 +31,11 @@ export default function HeroSection({ currentCity, onOpenBookingWizard }: HeroSe
       <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none z-0 opacity-40">
         <video
           src="https://uxxkrliutucqfaoortdb.supabase.co/storage/v1/object/public/web%20urge%20ya/videos/mochilaurgeyacompleto.mp4"
-          poster="https://uxxkrliutucqfaoortdb.supabase.co/storage/v1/object/public/web%20urge%20ya/inagenes/IMG-20260714-WA0009.jpg"
           autoPlay
           loop
           muted
           playsInline
-          preload="metadata"
+          preload="auto"
           className="w-full h-full object-cover scale-[1.02]"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/95 to-primary/80"></div>
@@ -115,24 +114,28 @@ export default function HeroSection({ currentCity, onOpenBookingWizard }: HeroSe
             {/* Top design accent */}
             <div className="absolute top-0 left-0 right-0 h-1.5 bg-accent"></div>
 
-            {/* Video preview display instead of static image */}
-            <div className="relative rounded-xl overflow-hidden mb-6 h-48 md:h-52 bg-slate-950/60 border border-white/10 group shadow-lg">
+            {/* Full Responsive Video Container - Shows complete uncropped video from start */}
+            <div className="relative w-full aspect-video rounded-xl overflow-hidden mb-6 bg-slate-950 border border-white/15 shadow-xl group">
               <video
                 src="https://uxxkrliutucqfaoortdb.supabase.co/storage/v1/object/public/web%20urge%20ya/videos/mochilaurgeyacompleto.mp4"
-                poster="https://uxxkrliutucqfaoortdb.supabase.co/storage/v1/object/public/web%20urge%20ya/inagenes/IMG-20260714-WA0009.jpg"
                 autoPlay
                 loop
                 muted
                 playsInline
-                preload="metadata"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                preload="auto"
+                className="w-full h-full object-contain bg-slate-950"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/30 to-transparent flex items-end p-4">
-                <div className="flex items-center gap-1.5">
-                  <span className="flex h-2.5 w-2.5 rounded-full bg-success animate-ping"></span>
-                  <span className="flex h-2.5 w-2.5 rounded-full bg-success absolute"></span>
-                  <span className="text-xs text-white font-bold uppercase tracking-wider pl-1">Vídeo Corporativo Oficial</span>
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent p-3 sm:p-4 flex items-center justify-between pointer-events-none">
+                <div className="flex items-center gap-2">
+                  <div className="relative flex h-2.5 w-2.5 shrink-0">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                  </div>
+                  <span className="text-xs text-white font-extrabold uppercase tracking-wider">Vídeo Corporativo Oficial</span>
                 </div>
+                <span className="text-[10px] text-amber-400 font-bold bg-slate-900/80 px-2 py-0.5 rounded border border-amber-400/30">
+                  En directo
+                </span>
               </div>
             </div>
 

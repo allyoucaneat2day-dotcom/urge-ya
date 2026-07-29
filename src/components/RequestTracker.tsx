@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Clock, Phone, MapPin, CheckCircle2, UserCheck, CheckCircle, ShieldAlert, ArrowRight, Loader2, Sparkles, X, Camera, Maximize2, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Clock, Phone, MapPin, CheckCircle2, UserCheck, CheckCircle, ShieldAlert, ArrowRight, Loader2, Sparkles, X, Camera, Maximize2, ChevronLeft, ChevronRight, Bell } from 'lucide-react';
 import { BookingRequest } from '../types';
 import { MOCK_TECHNICIANS, SERVICES, CITIES } from '../data';
 
@@ -9,11 +9,27 @@ interface RequestTrackerProps {
   onStatusChange: (status: any) => void;
 }
 
+interface ToastNotification {
+  id: string;
+  type: 'received' | 'assigning' | 'dispatched';
+  title: string;
+  message: string;
+  timestamp: string;
+  techName?: string;
+  techAvatar?: string;
+  eta?: number;
+}
+
 export default function RequestTracker({ request, onCancel, onStatusChange }: RequestTrackerProps) {
   const [internalStatus, setInternalStatus] = useState<string>('received');
   const [countdown, setCountdown] = useState(25);
   const [tech, setTech] = useState<any>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  
+  // Toast Snackbar state
+  const [toast, setToast] = useState<ToastNotification | null>(null);
+  const [isToastVisible, setIsToastVisible] = useState(false);
+  const toastTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Extract all request images
   const requestImages = Array.from(
@@ -71,6 +87,56 @@ export default function RequestTracker({ request, onCancel, onStatusChange }: Re
   // Calculate issue label
   const issueName = serviceDetail?.commonIssues.find((i) => i.id === request.issueId)?.name || request.customIssue || 'Reparación general';
 
+  // Trigger Toast/Snackbar whenever internalStatus changes
+  useEffect(() => {
+    let toastData: ToastNotification | null = null;
+    const cityName = cityDetail?.name || 'su ciudad';
+    const sName = serviceDetail?.name || request.service;
+
+    if (internalStatus === 'received') {
+      toastData = {
+        id: `toast-${Date.now()}`,
+        type: 'received',
+        title: '1/3 • Solicitud Registrada',
+        message: `Tu solicitud #${request.id} ha sido registrada. Procesando en ${cityName}...`,
+        timestamp: 'Ahora mismo',
+      };
+    } else if (internalStatus === 'assigning') {
+      toastData = {
+        id: `toast-${Date.now()}`,
+        type: 'assigning',
+        title: '2/3 • Buscando Técnico de Guardia',
+        message: `Buscando operario homologado en ${cityName} para ${sName}...`,
+        timestamp: 'Hace un instante',
+      };
+    } else if (internalStatus === 'dispatched') {
+      toastData = {
+        id: `toast-${Date.now()}`,
+        type: 'dispatched',
+        title: '3/3 • ¡Técnico Asignado y En Camino!',
+        message: `${tech?.name || 'El técnico de guardia'} ha aceptado tu servicio y se desplaza a tu ubicación.`,
+        timestamp: 'En tiempo real',
+        techName: tech?.name,
+        techAvatar: tech?.avatar,
+        eta: countdown || tech?.etaMinutes || 25,
+      };
+    }
+
+    if (toastData) {
+      setToast(toastData);
+      setIsToastVisible(true);
+
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+      toastTimerRef.current = setTimeout(() => {
+        setIsToastVisible(false);
+      }, 7000);
+    }
+
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    };
+  }, [internalStatus, request.id, request.service, cityDetail?.name, serviceDetail?.name, tech, countdown]);
+
   // Build WhatsApp text with images for technician
   const buildWhatsappText = () => {
     const lines = [
@@ -120,13 +186,28 @@ export default function RequestTracker({ request, onCancel, onStatusChange }: Re
           </p>
         </div>
 
-        <button
-          onClick={onCancel}
-          className="text-xs text-blue-200 hover:text-white bg-white/5 hover:bg-white/10 px-3.5 py-2 rounded-lg transition border border-white/10 cursor-pointer flex items-center gap-1.5 font-bold"
-        >
-          <X className="w-3.5 h-3.5" />
-          <span>Ocultar Rastreador</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              setIsToastVisible(true);
+              if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+              toastTimerRef.current = setTimeout(() => setIsToastVisible(false), 7000);
+            }}
+            className="text-xs text-amber-300 hover:text-amber-200 bg-amber-500/10 hover:bg-amber-500/20 px-3 py-2 rounded-lg transition border border-amber-500/30 cursor-pointer flex items-center gap-1.5 font-bold"
+            title="Ver notificación de progreso"
+          >
+            <Bell className="w-3.5 h-3.5 text-amber-400" />
+            <span className="hidden sm:inline">Ver Aviso</span>
+          </button>
+
+          <button
+            onClick={onCancel}
+            className="text-xs text-blue-200 hover:text-white bg-white/5 hover:bg-white/10 px-3.5 py-2 rounded-lg transition border border-white/10 cursor-pointer flex items-center gap-1.5 font-bold"
+          >
+            <X className="w-3.5 h-3.5" />
+            <span>Ocultar</span>
+          </button>
+        </div>
       </div>
 
       {/* Live Timeline Steps */}
@@ -448,6 +529,103 @@ export default function RequestTracker({ request, onCancel, onStatusChange }: Re
                 </svg>
                 <span>Enviar foto al WhatsApp del técnico</span>
               </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* FLOATING TOAST NOTIFICATION / SNACKBAR */}
+      {isToastVisible && toast && (
+        <div
+          id="status-toast-snackbar"
+          className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-[9999] max-w-sm sm:max-w-md w-[calc(100%-2.5rem)] animate-in slide-in-from-bottom-5 fade-in duration-300 pointer-events-auto"
+          onMouseEnter={() => {
+            if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+          }}
+          onMouseLeave={() => {
+            toastTimerRef.current = setTimeout(() => {
+              setIsToastVisible(false);
+            }, 4000);
+          }}
+        >
+          <div className={`p-4 rounded-2xl shadow-2xl backdrop-blur-xl border border-slate-700/80 bg-slate-900/95 text-white relative overflow-hidden transition-all duration-300 ${
+            toast.type === 'received' ? 'border-l-4 border-l-sky-500 shadow-sky-950/50' :
+            toast.type === 'assigning' ? 'border-l-4 border-l-amber-500 shadow-amber-950/50' :
+            'border-l-4 border-l-emerald-500 shadow-emerald-950/50'
+          }`}>
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3">
+                {/* Icon or Tech Avatar */}
+                {toast.type === 'dispatched' && toast.techAvatar ? (
+                  <div className="relative shrink-0">
+                    <img
+                      src={toast.techAvatar}
+                      alt={toast.techName}
+                      className="w-11 h-11 rounded-full object-cover border-2 border-emerald-400 shadow-md"
+                    />
+                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-slate-900 rounded-full animate-ping" />
+                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-slate-900 rounded-full" />
+                  </div>
+                ) : toast.type === 'assigning' ? (
+                  <div className="w-11 h-11 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center shrink-0">
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  </div>
+                ) : (
+                  <div className="w-11 h-11 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30 flex items-center justify-center shrink-0">
+                    <Bell className="w-5 h-5 animate-bounce text-sky-300" />
+                  </div>
+                )}
+
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                      toast.type === 'received' ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30' :
+                      toast.type === 'assigning' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
+                      'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                    }`}>
+                      {toast.title}
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-medium">{toast.timestamp}</span>
+                  </div>
+
+                  <p className="text-xs font-semibold text-slate-100 mt-1.5 leading-snug">
+                    {toast.message}
+                  </p>
+
+                  {toast.type === 'dispatched' && toast.eta && (
+                    <div className="mt-2 inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded-lg text-emerald-400 text-xs font-bold">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>Llegada estimada: ~{toast.eta} min</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Dismiss X button */}
+              <button
+                onClick={() => setIsToastVisible(false)}
+                className="text-slate-400 hover:text-white p-1 hover:bg-slate-800 rounded-lg transition shrink-0 cursor-pointer"
+                title="Cerrar aviso"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Bottom action bar */}
+            <div className="mt-3 pt-2.5 border-t border-slate-800 flex items-center justify-between text-[11px]">
+              <span className="text-slate-400 font-medium">Progreso en tiempo real</span>
+              <button
+                onClick={() => {
+                  const el = document.getElementById('active-tracker-container');
+                  if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }
+                }}
+                className="text-amber-400 hover:text-amber-300 font-extrabold flex items-center gap-1 transition cursor-pointer"
+              >
+                <span>Ver rastreador</span>
+                <ArrowRight className="w-3 h-3" />
+              </button>
             </div>
           </div>
         </div>

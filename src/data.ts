@@ -1,4 +1,4 @@
-import { CityInfo, ServiceDetail, Review, Technician } from './types';
+import { CityInfo, ServiceDetail, Review, Technician, ServiceId } from './types';
 
 export const CITIES: Record<string, CityInfo> = {
   barcelona: {
@@ -29,6 +29,177 @@ export const CITIES: Record<string, CityInfo> = {
     description: 'Atención rápida en Valencia capital, Torrent, Gandia, Paterna, Sagunt, Alzira y municipios limítrofes.'
   }
 };
+
+export interface SiloCluster {
+  id: string;
+  name: string;
+  description: string;
+  geoKeywords: string[];
+}
+
+export interface SiloCategory {
+  id: ServiceId;
+  name: string;
+  siloSlug: string;
+  badge: string;
+  tagline: string;
+  clusters: SiloCluster[];
+  seoTitle: string;
+  seoDescription: string;
+}
+
+export const SILO_STRUCTURE: SiloCategory[] = [
+  {
+    id: 'fontaneria',
+    name: 'Fontanería Urgente 24h',
+    siloSlug: 'fontaneria-24h',
+    badge: 'SILO PILAR #1',
+    tagline: 'Soluciones inmediatas para fugas, desatascos, filtraciones y grifería.',
+    seoTitle: 'Fontaneros Urgentes 24h - Llegada en 20-30 min | Urge Ya',
+    seoDescription: 'Fontanero de urgencia 24 horas en Barcelona, Madrid y Valencia. Reparación de fugas de agua, desatascos de bajantes y fregaderos, cambio de llaves de paso.',
+    clusters: [
+      {
+        id: 'fugas',
+        name: 'Fugas de Agua y Humedades',
+        description: 'Detección por ultrasonido y reparación urgente sin destrozos innecesarios.',
+        geoKeywords: ['fuga de agua barcelona urgente', 'reparacion humedades madrid', 'fontanero fugas 24h valencia']
+      },
+      {
+        id: 'desatascos',
+        name: 'Desatascos de Tuberías y Bajantes',
+        description: 'Limpieza de desagües, inodoros y fregaderos atrancados con camión cuba o muelle neumático.',
+        geoKeywords: ['desatasco fregadero barcelona', 'desatascos tuberias urgentes madrid', 'limpieza bajantes valencia']
+      },
+      {
+        id: 'wc_griferia',
+        name: 'Sanitarios, Cisternas y Grifería',
+        description: 'Cambio y sustitución de mecanismos de inodoro, llaves de paso y grifos monomando.',
+        geoKeywords: ['reparar cisterna inodoro barcelona', 'cambiar grifo cocina madrid', 'fontanero sanitario valencia']
+      }
+    ]
+  },
+  {
+    id: 'electricidad',
+    name: 'Electricidad y Boletines CIE',
+    siloSlug: 'electricistas-autorizados',
+    badge: 'SILO PILAR #2',
+    tagline: 'Electricistas autorizados para cortocircuitos, cuadros de luz y altas nuevas.',
+    seoTitle: 'Electricistas Urgentes 24 horas y Boletín Eléctrico (CIE) | Urge Ya',
+    seoDescription: 'Electricista autorizado 24h en Barcelona, Madrid y Valencia. Reparación de saltos de diferencial, apagones y tramitación oficial de Boletines Eléctricos.',
+    clusters: [
+      {
+        id: 'apagones',
+        name: 'Apagones y Cortocircuitos',
+        description: 'Localización de derivaciones a tierra, fallos de ICP y saltos continuos del diferencial.',
+        geoKeywords: ['electricista apagones barcelona', 'reparar cortocircuito madrid 24h', 'salta el diferencial valencia']
+      },
+      {
+        id: 'boletines',
+        name: 'Boletines Eléctricos Oficiales (CIE)',
+        description: 'Emisión de Certificados de Instalación Eléctrica para altas de luz y aumentos de potencia.',
+        geoKeywords: ['boletin electrico barcelona urgente', 'certificado cie madrid precio', 'boletin luz valencia 24h']
+      },
+      {
+        id: 'cuadros',
+        name: 'Cuadros Eléctricos e Instalaciones',
+        description: 'Sustitución de cuadros antiguos, magnetotérmicos, sobretensiones y recarga de vehículos.',
+        geoKeywords: ['cambiar cuadro electrico barcelona', 'instalador electricista autorizado madrid', 'enchufes e iluminacion valencia']
+      }
+    ]
+  },
+  {
+    id: 'calentadores',
+    name: 'Calderas y Termos Eléctricos',
+    siloSlug: 'calderas-termos',
+    badge: 'SILO PILAR #3',
+    tagline: 'Reparación e instalación multimarca de agua caliente y calefacción.',
+    seoTitle: 'Técnicos de Calderas y Termos 24h | Urge Ya',
+    seoDescription: 'Reparación de calderas de gas, termos eléctricos y calentadores en Barcelona, Madrid y Valencia. Repuestos originales y garantía por escrito.',
+    clusters: [
+      {
+        id: 'reparacion_caldera',
+        name: 'Reparación de Calderas y Termos',
+        description: 'Solución a códigos de error, falta de agua caliente, ruidos o pérdida de presión.',
+        geoKeywords: ['reparacion caldera barcelona 24h', 'arreglar termo electrico madrid', 'servicio tecnico calderas valencia']
+      },
+      {
+        id: 'instalacion_termo',
+        name: 'Instalación de Equipos Nuevos',
+        description: 'Sustitución rápida de acumuladores y termos Junkers, Vaillant, Saunier Duval, Ariston o Fleck.',
+        geoKeywords: ['instalador termo electrico barcelona', 'cambiar caldera gas madrid', 'comprar caldera instalada valencia']
+      }
+    ]
+  },
+  {
+    id: 'aire',
+    name: 'Aire Acondicionado y Climatización',
+    siloSlug: 'aire-acondicionado-24h',
+    badge: 'SILO PILAR #4',
+    tagline: 'Cargas de gas refrigerante, higienización y reparación de splits.',
+    seoTitle: 'Servicio Técnico de Aire Acondicionado 24h | Urge Ya',
+    seoDescription: 'Carga de gas R32/R410A, reparación de split y conductos de aire acondicionado en Barcelona, Madrid y Valencia.',
+    clusters: [
+      {
+        id: 'carga_gas',
+        name: 'Carga de Gas Refrigerante (R32 / R410A)',
+        description: 'Localización previa de fugas con nitrógeno y recarga de refrigerante ecológico.',
+        geoKeywords: ['carga gas aire acondicionado barcelona', 'recarga r32 madrid precio', 'tecnico aire acondicionado valencia']
+      },
+      {
+        id: 'goteo_limpieza',
+        name: 'Goteo y Mantenimiento de Filtros',
+        description: 'Desobstrucción del tubo de drenaje, nivelación y tratamiento antibacterias.',
+        geoKeywords: ['aire acondicionado gotea agua barcelona', 'limpieza filtros aire madrid', 'reparar split valencia']
+      }
+    ]
+  },
+  {
+    id: 'gas',
+    name: 'Gas e Inspecciones Oficiales',
+    siloSlug: 'instaladores-gas-autorizados',
+    badge: 'SILO PILAR #5',
+    tagline: 'Subsanación de defectos en la revisión de 5 años y certificados oficiales.',
+    seoTitle: 'Instaladores de Gas Autorizados 24h | Urge Ya',
+    seoDescription: 'Corrección de anomalías en la inspección periódica del gas, sellado de fugas y conexión de cocinas de gas en Barcelona, Madrid y Valencia.',
+    clusters: [
+      {
+        id: 'anomalias_gas',
+        name: 'Corrección de Defectos (Inspección 5 Años)',
+        description: 'Atención urgente tras corte de suministro o informe desfavorable de Nedgia / Naturgy / Madrileña / Redexis.',
+        geoKeywords: ['correccion anomalias gas barcelona', 'subsanar defecto gas madrid', 'boletin gas valencia 24h']
+      },
+      {
+        id: 'fugas_gas',
+        name: 'Fugas de Gas y Cocinas',
+        description: 'Comprobación de estanqueidad con manómetro diferencial y cambio de liras / gomas caducadas.',
+        geoKeywords: ['fuga de gas barcelona urgente', 'conexion cocina gas madrid', 'reparar llave gas valencia']
+      }
+    ]
+  },
+  {
+    id: 'manitas',
+    name: 'Manitas del Hogar y Mantenimiento',
+    siloSlug: 'manitas-reparaciones-hogar',
+    badge: 'SILO PILAR #6',
+    tagline: 'Pintura, persianas, montaje de muebles y pequeñas reformas.',
+    seoTitle: 'Manitas a Domicilio y Reparaciones del Hogar | Urge Ya',
+    seoDescription: 'Manitas rápido a domicilio para colgar cuadros, montar muebles, arreglar persianas y pequeños retoques de pintura en Barcelona, Madrid y Valencia.',
+    clusters: [
+      {
+        id: 'muebles_fijaciones',
+        name: 'Montaje de Muebles y Soportes TV',
+        description: 'Ensamblaje perfecto de armarios Ikea/Leroy, fijación de mamparas y cuadros pesados en pladur.',
+        geoKeywords: ['manitas montaje muebles barcelona', 'colgar tv pared madrid', 'manitas a domicilio valencia']
+      },
+      {
+        id: 'persianas_pintura',
+        name: 'Persianas y Retoques de Pintura',
+        description: 'Cambio de cintas, recogedores, lamas rotas y saneamiento de techos o paredes con pintura antihumedad.',
+        geoKeywords: ['arreglar persiana barcelona urgente', 'pintor habitacion madrid economico', 'reparaciones hogar valencia']
+      }
+    ]
+  }
+];
 
 export const SERVICES: ServiceDetail[] = [
   {

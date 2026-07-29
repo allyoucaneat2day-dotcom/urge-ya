@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 
 import { CityId, ServiceId, ServiceIssue, BookingRequest, Review } from './types';
-import { CITIES, SERVICES, INITIAL_REVIEWS } from './data';
+import { CITIES, SERVICES, INITIAL_REVIEWS, SILO_STRUCTURE } from './data';
 
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
@@ -29,6 +29,8 @@ import ReviewsHub from './components/ReviewsHub';
 import FAQSection from './components/FAQSection';
 import CookieBanner from './components/CookieBanner';
 import AIAssistant from './components/AIAssistant';
+import SiloBreadcrumbs from './components/SiloBreadcrumbs';
+import SiloStructureSection from './components/SiloStructureSection';
 
 export default function App() {
   // States
@@ -83,7 +85,43 @@ export default function App() {
         console.error('Error parsing custom reviews', e);
       }
     }
-  }, [currentCityId, currentCity.name]);
+
+    // 4. Update dynamic SILO BreadcrumbList JSON-LD Schema for GEO engines
+    const currentSilo = SILO_STRUCTURE.find(s => s.id === selectedServiceId) || SILO_STRUCTURE[0];
+    const schemaData = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Urge Ya",
+          "item": "https://urgeya.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": `Delegación ${currentCity.name}`,
+          "item": `https://urgeya.com/#${currentCity.id}`
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": currentSilo.name,
+          "item": `https://urgeya.com/#${currentSilo.siloSlug}`
+        }
+      ]
+    };
+
+    let scriptEl = document.getElementById('dynamic-silo-schema');
+    if (!scriptEl) {
+      scriptEl = document.createElement('script');
+      scriptEl.id = 'dynamic-silo-schema';
+      scriptEl.setAttribute('type', 'application/ld+json');
+      document.head.appendChild(scriptEl);
+    }
+    scriptEl.textContent = JSON.stringify(schemaData);
+  }, [currentCityId, currentCity.name, currentCity.id, selectedServiceId]);
 
   // Handle city selection changes
   const handleCityChange = (cityId: CityId) => {
@@ -187,6 +225,14 @@ export default function App() {
         onServiceSelect={handleServiceSelect}
       />
 
+      {/* 1.5. SILO Breadcrumbs Navigation Bar */}
+      <SiloBreadcrumbs
+        currentCity={currentCity}
+        selectedServiceId={selectedServiceId}
+        onServiceSelect={handleServiceSelect}
+        onCityChange={handleCityChange}
+      />
+
       {/* 2. Hero banner */}
       <HeroSection
         currentCity={currentCity}
@@ -275,6 +321,14 @@ export default function App() {
         onServiceSelect={handleServiceSelect}
         onIssueSelect={handleIssueSelect}
         currentCity={currentCity}
+      />
+
+      {/* 5.5. SILO Architecture & GEO Information Section */}
+      <SiloStructureSection
+        currentCity={currentCity}
+        selectedServiceId={selectedServiceId}
+        onServiceSelect={handleServiceSelect}
+        onCityChange={handleCityChange}
       />
 
       {/* 6. Legalizations & Certificates spotlight poster */}

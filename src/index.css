@@ -82,11 +82,6 @@ body {
     max-height: 98dvh !important;
     border-radius: 1rem !important;
   }
-
-  /* Video / Media height adjustments in landscape */
-  .hero-video-box {
-    height: 9rem !important;
-  }
 }
 
 @media (max-height: 500px) {
