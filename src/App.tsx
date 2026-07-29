@@ -634,6 +634,10 @@ export default function App() {
           if (issue) setSelectedIssue(issue as any);
           setIsBookingOpen(true);
         }}
+        onBookingCreated={(booking) => {
+          setActiveBooking(booking);
+          localStorage.setItem('reparaya_active_booking', JSON.stringify(booking));
+        }}
       />
 
       <div className="fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-40">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Send, ChevronRight, CheckCircle2, ShieldCheck, Flame, Droplet, Bolt, Wind, Activity, Wrench, AlertTriangle } from 'lucide-react';
+import { X, Send, ChevronRight, CheckCircle2, ShieldCheck, Flame, Droplet, Bolt, Wind, Activity, Wrench, AlertTriangle, Camera } from 'lucide-react';
 import { SERVICES, CITIES } from '../data';
 import { CityId, ServiceId, ServiceIssue, BookingRequest } from '../types';
 
@@ -24,6 +24,7 @@ export default function BookingWizard({
   const [service, setService] = useState<ServiceId>(selectedServiceId);
   const [issueId, setIssueId] = useState<string>(selectedIssue?.id || 'custom');
   const [customIssue, setCustomIssue] = useState('');
+  const [wizardImages, setWizardImages] = useState<string[]>([]);
   
   // Contact details
   const [name, setName] = useState('');
@@ -69,6 +70,20 @@ export default function BookingWizard({
     setStep(1);
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    Array.from(files).forEach((file: File) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          setWizardImages((prev) => [...prev, reader.result as string].slice(0, 3));
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Validate step 2
@@ -94,12 +109,14 @@ export default function BookingWizard({
       issueId: issueId === 'custom' ? undefined : issueId,
       customIssue: issueId === 'custom' ? customIssue : undefined,
       address,
-      urgency
+      urgency,
+      images: wizardImages
     });
     
     // Reset state & close
     setStep(1);
     setCustomIssue('');
+    setWizardImages([]);
     onClose();
   };
 
@@ -238,6 +255,41 @@ export default function BookingWizard({
                     ></textarea>
                   </div>
                 )}
+
+                {/* Photo Upload Section */}
+                <div className="pt-2 border-t border-slate-100">
+                  <label className="block text-xs font-extrabold text-slate-500 uppercase tracking-wide mb-1.5 flex items-center justify-between">
+                    <span>Fotos de la avería (Opcional)</span>
+                    <span className="text-[10px] text-slate-400 font-bold">Máx 3 fotos</span>
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <label className="flex items-center justify-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg text-xs font-extrabold text-slate-700 cursor-pointer transition">
+                      <Camera className="w-4 h-4 text-secondary" />
+                      <span>{wizardImages.length > 0 ? 'Añadir más fotos' : 'Adjuntar fotos de la avería'}</span>
+                      <input type="file" accept="image/*" multiple onChange={handleImageUpload} className="hidden" />
+                    </label>
+                    {wizardImages.length > 0 && (
+                      <span className="text-xs text-emerald-600 font-bold">{wizardImages.length} foto(s)</span>
+                    )}
+                  </div>
+                  {wizardImages.length > 0 && (
+                    <div className="flex gap-2 mt-2.5">
+                      {wizardImages.map((img, idx) => (
+                        <div key={idx} className="relative w-12 h-12 rounded-lg overflow-hidden border border-slate-200 shadow-sm">
+                          <img src={img} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => setWizardImages(prev => prev.filter((_, i) => i !== idx))}
+                            className="absolute top-0 right-0 bg-rose-600 hover:bg-rose-700 text-white rounded-bl px-1 py-0.2 text-[10px] font-bold cursor-pointer"
+                            title="Eliminar foto"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             ) : (
               /* STEP 2: CONTACT DETAILS */

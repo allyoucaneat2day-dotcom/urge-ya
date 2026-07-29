@@ -18,12 +18,14 @@ interface Message {
 
 interface AIAssistantProps {
   currentCity: {
+    id?: string;
     name: string;
     phone: string;
     phoneFormatted: string;
   };
   selectedServiceId?: string;
   onOpenBookingWizard: (serviceId?: string, issue?: string) => void;
+  onBookingCreated?: (booking: any) => void;
 }
 
 // Multi-language definitions
@@ -415,7 +417,7 @@ const MULTILINGUAL_RESPONSES: Record<string, Record<string, { text: string; spok
   }
 };
 
-export default function AIAssistant({ currentCity, selectedServiceId = 'fontaneria', onOpenBookingWizard }: AIAssistantProps) {
+export default function AIAssistant({ currentCity, selectedServiceId = 'fontaneria', onOpenBookingWizard, onBookingCreated }: AIAssistantProps) {
   const selectedService = SERVICES.find((s) => s.id === selectedServiceId) || SERVICES[0];
   const [isOpen, setIsOpen] = useState(false);
   const [isVoiceMuted, setIsVoiceMuted] = useState(() => {
@@ -1215,6 +1217,31 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
     if (!formData.name || !formData.phone || !formData.address) return;
     
     setDispatchStep('success');
+
+    // Gather images uploaded or generated during chat
+    const currentUploadUrls = uploadedImages.map(img => `data:${img.mimeType};base64,${img.base64}`);
+    const allSessionPhotos = Array.from(new Set([...currentUploadUrls, ...sessionImages]));
+
+    const bookingId = `RY-${Math.floor(100000 + Math.random() * 900000)}`;
+    const newBooking = {
+      id: bookingId,
+      name: formData.name,
+      phone: formData.phone,
+      address: formData.address,
+      city: (currentCity as any)?.id || 'barcelona',
+      service: selectedServiceId || 'fontaneria',
+      urgency: 'urgente',
+      status: 'received',
+      createdAt: new Date().toISOString(),
+      customIssue: messages.filter(m => m.sender === 'user').map(m => m.text).join(' | ') || 'Atención técnica solicitada por voz/chat con LUNA',
+      images: allSessionPhotos
+    };
+
+    localStorage.setItem('reparaya_active_booking', JSON.stringify(newBooking));
+    window.dispatchEvent(new Event('storage'));
+    if (onBookingCreated) {
+      onBookingCreated(newBooking);
+    }
     
     let confirmSpoken = "";
     if (currentLang === 'en') {

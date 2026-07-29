@@ -43,6 +43,8 @@ export interface BookingRequest {
   status: 'received' | 'assigning' | 'dispatched' | 'completed';
   createdAt: string;
   assignedTech?: Technician;
+  images?: string[];
+  image?: string;
 }
 
 export interface Technician {
