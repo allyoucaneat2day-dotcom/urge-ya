@@ -181,7 +181,7 @@ export default function RequestTracker({ request, onCancel, onStatusChange }: Re
           <h3 className="font-display font-black text-xl md:text-2xl mt-2 tracking-tight">
             Estado del Servicio Técnico
           </h3>
-          <p className="text-xs text-blue-200/70 mt-1 font-medium">
+          <p className="text-xs text-teal-200/70 mt-1 font-medium">
             ID de solicitud: <span className="font-mono text-white font-bold">{request.id}</span>
           </p>
         </div>
@@ -202,7 +202,7 @@ export default function RequestTracker({ request, onCancel, onStatusChange }: Re
 
           <button
             onClick={onCancel}
-            className="text-xs text-blue-200 hover:text-white bg-white/5 hover:bg-white/10 px-3.5 py-2 rounded-lg transition border border-white/10 cursor-pointer flex items-center gap-1.5 font-bold"
+            className="text-xs text-teal-200 hover:text-white bg-white/5 hover:bg-white/10 px-3.5 py-2 rounded-lg transition border border-white/10 cursor-pointer flex items-center gap-1.5 font-bold"
           >
             <X className="w-3.5 h-3.5" />
             <span>Ocultar</span>
@@ -220,35 +220,35 @@ export default function RequestTracker({ request, onCancel, onStatusChange }: Re
             <CheckCircle className="w-5 h-5" />
           </div>
           <span className="text-xs font-extrabold mt-2 text-white">Recibida</span>
-          <span className="text-[9px] text-blue-200/60 mt-0.5 font-medium">Registrada</span>
+          <span className="text-[9px] text-teal-200/60 mt-0.5 font-medium">Registrada</span>
         </div>
 
         {/* Step 2 */}
         <div className="flex flex-col items-center text-center relative z-10">
           <div className={`h-9 w-9 rounded-full flex items-center justify-center font-bold text-sm transition-all ${
             internalStatus === 'received' 
-              ? 'bg-white/5 text-blue-200/50 border border-white/10' 
+              ? 'bg-white/5 text-teal-200/50 border border-white/10' 
               : internalStatus === 'assigning'
-                ? 'bg-secondary text-white animate-pulse shadow-lg shadow-blue-500/20'
+                ? 'bg-secondary text-white animate-pulse shadow-lg shadow-teal-500/20'
                 : 'bg-success text-white shadow-lg shadow-emerald-500/20'
           }`}>
             {internalStatus === 'received' ? '2' : internalStatus === 'assigning' ? <Loader2 className="w-5 h-5 animate-spin" /> : <CheckCircle className="w-5 h-5" />}
           </div>
-          <span className={`text-xs font-extrabold mt-2 ${internalStatus === 'received' ? 'text-blue-200/50' : 'text-white'}`}>Asignando</span>
-          <span className="text-[9px] text-blue-200/60 mt-0.5 font-medium">Técnico de guardia</span>
+          <span className={`text-xs font-extrabold mt-2 ${internalStatus === 'received' ? 'text-teal-200/50' : 'text-white'}`}>Asignando</span>
+          <span className="text-[9px] text-teal-200/60 mt-0.5 font-medium">Técnico de guardia</span>
         </div>
 
         {/* Step 3 */}
         <div className="flex flex-col items-center text-center relative z-10">
           <div className={`h-9 w-9 rounded-full flex items-center justify-center font-bold text-sm transition-all ${
             internalStatus !== 'dispatched'
-              ? 'bg-white/5 text-blue-200/50 border border-white/10'
+              ? 'bg-white/5 text-teal-200/50 border border-white/10'
               : 'bg-accent text-primary shadow-lg shadow-amber-400/20 animate-pulse'
           }`}>
             {internalStatus !== 'dispatched' ? '3' : <Sparkles className="w-5 h-5 text-primary" />}
           </div>
-          <span className={`text-xs font-extrabold mt-2 ${internalStatus !== 'dispatched' ? 'text-blue-200/50' : 'text-accent font-black'}`}>En Camino</span>
-          <span className="text-[9px] text-blue-200/60 mt-0.5 font-medium">Desplazamiento gratis</span>
+          <span className={`text-xs font-extrabold mt-2 ${internalStatus !== 'dispatched' ? 'text-teal-200/50' : 'text-accent font-black'}`}>En Camino</span>
+          <span className="text-[9px] text-teal-200/60 mt-0.5 font-medium">Desplazamiento gratis</span>
         </div>
       </div>
 
@@ -260,7 +260,7 @@ export default function RequestTracker({ request, onCancel, onStatusChange }: Re
           <div className="text-center py-4 space-y-2.5 animate-in fade-in duration-300">
             <div className="relative inline-block">
               <span className="flex h-10 w-10 rounded-full bg-secondary/20 animate-ping absolute"></span>
-              <div className="h-10 w-10 rounded-full bg-[#0174BE] flex items-center justify-center">
+              <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center">
                 <Clock className="w-5 h-5 text-white animate-pulse" />
               </div>
             </div>
@@ -276,7 +276,7 @@ export default function RequestTracker({ request, onCancel, onStatusChange }: Re
           <div className="text-center py-4 space-y-2.5 animate-in fade-in duration-300">
             <div className="relative inline-block">
               <span className="flex h-10 w-10 rounded-full bg-secondary/20 animate-ping absolute"></span>
-              <div className="h-10 w-10 rounded-full bg-[#0174BE] flex items-center justify-center">
+              <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center">
                 <UserCheck className="w-5 h-5 text-white" />
               </div>
             </div>
@@ -324,7 +324,7 @@ export default function RequestTracker({ request, onCancel, onStatusChange }: Re
             <div className="flex flex-col sm:flex-row gap-3 pt-1">
               <a
                 href={`tel:${cityDetail.phone}`}
-                className="flex-1 flex items-center justify-center gap-2 bg-[#0174BE] hover:bg-blue-600 text-white text-xs font-black py-3 rounded-lg transition-all cursor-pointer shadow-md"
+                className="flex-1 flex items-center justify-center gap-2 bg-secondary hover:bg-teal-700 text-white text-xs font-black py-3 rounded-lg transition-all cursor-pointer shadow-md"
               >
                 <Phone className="w-3.5 h-3.5" />
                 <span>Contactar con Central (Urgencias)</span>

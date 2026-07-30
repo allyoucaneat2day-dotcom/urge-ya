@@ -58,7 +58,7 @@ export default function HeroSection({ currentCity, onOpenBookingWizard }: HeroSe
               Reparamos <span className="text-accent">hoy</span> mismo su hogar.
             </h1>
 
-            <p className="text-blue-100 text-base md:text-lg max-w-xl font-normal leading-relaxed">
+            <p className="text-teal-100 text-base md:text-lg max-w-xl font-normal leading-relaxed">
               Más de 25 años de experiencia en fontanería, electricidad y climatización. Asistencia inmediata certificada.
             </p>
           </div>
@@ -85,7 +85,7 @@ export default function HeroSection({ currentCity, onOpenBookingWizard }: HeroSe
                 <div className="w-8 h-8 rounded-full bg-secondary border-2 border-primary flex items-center justify-center text-[10px] font-bold text-white">4.9★</div>
                 <div className="w-8 h-8 rounded-full bg-accent border-2 border-primary flex items-center justify-center text-[10px] font-bold text-primary">25+</div>
               </div>
-              <div className="text-xs text-blue-100 font-medium">
+              <div className="text-xs text-teal-100 font-medium">
                 Satisfechos en <span className="text-white font-semibold">{currentCity.name}</span>
               </div>
             </div>
@@ -172,7 +172,7 @@ export default function HeroSection({ currentCity, onOpenBookingWizard }: HeroSe
                 </a>
               </div>
 
-              <div className="pt-2 border-t border-white/10 text-xs text-blue-100/80 space-y-1">
+              <div className="pt-2 border-t border-white/10 text-xs text-teal-100/80 space-y-1">
                 <p>Presupuesto sin compromiso. Desplazamiento <span className="text-accent font-bold">GRATIS</span> al aceptar el servicio.</p>
                 <p className="font-semibold text-white">¡Llámanos ya, técnicos de guardia en camino!</p>
               </div>

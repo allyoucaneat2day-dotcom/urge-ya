@@ -270,12 +270,12 @@ export default function App() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Card 1: Cita inmediata */}
             <div className="flex flex-col items-center text-center p-5 bg-slate-50 border border-slate-100 hover:border-slate-200 hover:shadow-md rounded-2xl transition">
-              <div className="p-3 bg-blue-100/60 text-blue-600 rounded-xl mb-4 shrink-0">
+              <div className="p-3 bg-teal-100/60 text-teal-700 rounded-xl mb-4 shrink-0">
                 <CalendarRange className="w-8 h-8" />
               </div>
               <h4 className="font-bold text-slate-950 text-base mb-2">Cita Inmediata</h4>
               <p className="text-slate-600 text-xs leading-relaxed">
-                Asignamos una visita técnica con el especialista especializado <strong className="text-blue-600">el mismo día</strong> de su llamada o solicitud.
+                Asignamos una visita técnica con el especialista especializado <strong className="text-teal-700">el mismo día</strong> de su llamada o solicitud.
               </p>
             </div>
 
@@ -414,7 +414,7 @@ export default function App() {
       <section className="py-16 md:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
-            <span className="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+            <span className="text-xs font-bold uppercase tracking-wider text-secondary bg-secondary/10 px-3 py-1 rounded-full">
               Trayectoria y Confianza
             </span>
             

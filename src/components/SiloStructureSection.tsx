@@ -173,12 +173,12 @@ export default function SiloStructureSection({
             </div>
 
             {/* AI Assistant Callout */}
-            <div className="bg-slate-900/90 border border-sky-500/30 p-4 rounded-xl flex items-start gap-3">
-              <div className="p-2 bg-sky-500/20 text-sky-400 rounded-lg shrink-0">
+            <div className="bg-slate-900/90 border border-teal-500/30 p-4 rounded-xl flex items-start gap-3">
+              <div className="p-2 bg-teal-500/20 text-teal-400 rounded-lg shrink-0">
                 <Bot className="w-5 h-5" />
               </div>
               <div className="text-xs space-y-1">
-                <span className="font-extrabold text-sky-300 block">LUNA - Gestora Virtual Urge Ya</span>
+                <span className="font-extrabold text-teal-300 block">LUNA - Gestora Virtual Urge Ya</span>
                 <p className="text-slate-300 leading-snug">
                   Nuestra asistente virtual analiza el problema en lenguaje natural para la delegación de {currentCity.name}, asignando al técnico especializado disponible más cercano.
                 </p>

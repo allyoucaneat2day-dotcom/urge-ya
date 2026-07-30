@@ -16,7 +16,7 @@ export default function FAQSection() {
         
         {/* Title and subtitle */}
         <div className="text-center max-w-xl mx-auto mb-12">
-          <span className="text-xs font-bold uppercase tracking-widest text-secondary bg-[#0174BE]/10 px-3 py-1 rounded-full">
+          <span className="text-xs font-bold uppercase tracking-widest text-secondary bg-secondary/10 px-3 py-1 rounded-full">
             Resolviendo Dudas
           </span>
           <h2 className="font-display text-3xl font-extrabold text-primary mt-4 tracking-tight">
@@ -51,7 +51,7 @@ export default function FAQSection() {
                     </span>
                   </div>
                   <div className={`p-1.5 rounded-lg transition-transform duration-200 ${
-                    isOpen ? 'rotate-180 text-secondary bg-[#0174BE]/10' : 'text-slate-400 bg-slate-50'
+                    isOpen ? 'rotate-180 text-secondary bg-secondary/10' : 'text-slate-400 bg-slate-50'
                   }`}>
                     <ChevronDown className="w-4 h-4" />
                   </div>
@@ -81,7 +81,7 @@ export default function FAQSection() {
         <div className="mt-12 bg-primary text-white rounded-2xl p-8 border border-primary text-center space-y-4 shadow-lg relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-accent"></div>
           <h4 className="font-display font-extrabold text-sm uppercase tracking-widest text-accent">¿Tiene otra consulta técnica o comercial?</h4>
-          <p className="text-blue-100 text-xs max-w-lg mx-auto font-semibold">
+          <p className="text-teal-100 text-xs max-w-lg mx-auto font-semibold">
             Nuestros operadores telefónicos de guardia están listos para responderle al instante sin compromiso alguno.
           </p>
           <div className="pt-1">

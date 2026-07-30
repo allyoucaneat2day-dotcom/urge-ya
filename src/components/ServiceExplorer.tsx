@@ -61,7 +61,7 @@ export default function ServiceExplorer({
         
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto">
-          <span className="text-xs font-bold uppercase tracking-widest text-secondary bg-[#0174BE]/10 px-3 py-1 rounded-full">
+          <span className="text-xs font-bold uppercase tracking-widest text-secondary bg-secondary/10 px-3 py-1 rounded-full">
             Especialidades
           </span>
           <h2 className="font-display text-3xl md:text-4xl font-extrabold text-primary mt-4 tracking-tight">
@@ -161,7 +161,7 @@ export default function ServiceExplorer({
               <p className="text-accent font-extrabold text-sm md:text-base mt-1.5">
                 {selectedService.tagline}
               </p>
-              <p className="text-blue-100 text-xs md:text-sm mt-3 leading-relaxed opacity-95">
+              <p className="text-teal-100 text-xs md:text-sm mt-3 leading-relaxed opacity-95">
                 {selectedService.longDescription}
               </p>
               <div className="mt-4 flex items-center gap-2 text-accent text-xs font-bold">
@@ -186,7 +186,7 @@ export default function ServiceExplorer({
               {selectedService.commonIssues.map((issue) => (
                 <div
                   key={issue.id}
-                  className="group bg-slate-50 hover:bg-[#0174BE]/5 border border-slate-200/60 hover:border-[#0174BE]/20 p-4 rounded-xl transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+                  className="group bg-slate-50 hover:bg-secondary/5 border border-slate-200/60 hover:border-secondary/20 p-4 rounded-xl transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
@@ -214,7 +214,7 @@ export default function ServiceExplorer({
 
                     <button
                       onClick={() => onIssueSelect(selectedService.id, issue)}
-                      className="flex items-center gap-1.5 bg-white group-hover:bg-[#0174BE] text-secondary group-hover:text-white border border-[#0174BE]/30 group-hover:border-[#0174BE] px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer whitespace-nowrap shadow-sm"
+                      className="flex items-center gap-1.5 bg-white group-hover:bg-secondary text-secondary group-hover:text-white border border-secondary/30 group-hover:border-secondary px-3.5 py-2 rounded-lg text-xs font-black transition-all cursor-pointer whitespace-nowrap shadow-sm"
                     >
                       <span>Solicitar</span>
                       <ArrowRight className="w-3.5 h-3.5" />

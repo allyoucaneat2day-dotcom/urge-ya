@@ -53,7 +53,7 @@ export default function ReviewsHub({ reviews, onAddReview }: ReviewsHubProps) {
         {/* Header section with overall scores */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
           <div>
-            <span className="text-xs font-bold uppercase tracking-widest text-secondary bg-[#0174BE]/10 px-3 py-1 rounded-full">
+            <span className="text-xs font-bold uppercase tracking-widest text-secondary bg-secondary/10 px-3 py-1 rounded-full">
               Testimonios Reales
             </span>
             <h2 className="font-display text-3xl md:text-4xl font-extrabold text-primary mt-4 tracking-tight">
@@ -191,7 +191,7 @@ export default function ReviewsHub({ reviews, onAddReview }: ReviewsHubProps) {
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 bg-secondary hover:bg-blue-700 text-white font-extrabold rounded-lg text-xs cursor-pointer shadow-sm"
+                    className="px-5 py-2 bg-secondary hover:bg-teal-700 text-white font-extrabold rounded-lg text-xs cursor-pointer shadow-sm"
                   >
                     Enviar Comentario
                   </button>
@@ -221,7 +221,7 @@ export default function ReviewsHub({ reviews, onAddReview }: ReviewsHubProps) {
                       />
                     ))}
                   </div>
-                  <span className="text-[9px] font-extrabold uppercase tracking-widest text-secondary bg-[#0174BE]/10 px-2.5 py-1 rounded-full">
+                  <span className="text-[9px] font-extrabold uppercase tracking-widest text-secondary bg-secondary/10 px-2.5 py-1 rounded-full">
                     {review.service}
                   </span>
                 </div>

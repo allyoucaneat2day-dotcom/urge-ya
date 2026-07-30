@@ -4,12 +4,12 @@
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-display: "Space Grotesk", "Inter", sans-serif;
   
-  /* Sleek Interface Color Theme */
-  --color-primary: #0C356A;
-  --color-secondary: #0174BE;
+  /* Sleek Interface Color Theme - Turquoise Blue (Azul Turquesa) */
+  --color-primary: #004D5A;
+  --color-secondary: #008B9B;
   --color-accent: #FFC436;
   --color-success: #25D366;
-  --color-bg-light: #F4F6F9;
+  --color-bg-light: #F4F8F9;
 }
 
 @keyframes pulse-gentle {

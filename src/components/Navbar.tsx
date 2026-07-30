@@ -65,7 +65,7 @@ export default function Navbar({ currentCity, onCityChange, onServiceSelect }: N
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <span className="hidden md:inline text-blue-100 opacity-90">Atención Telefónica 24 Horas / 365 Días</span>
+            <span className="hidden md:inline text-teal-100 opacity-90">Atención Telefónica 24 Horas / 365 Días</span>
             <div className="relative">
               <button
                 onClick={() => setIsCityDropdownOpen(!isCityDropdownOpen)}
@@ -73,7 +73,7 @@ export default function Navbar({ currentCity, onCityChange, onServiceSelect }: N
               >
                 <MapPin className="w-3 h-3 text-accent" />
                 <span>Delegación: {currentCity.name}</span>
-                <ChevronDown className="w-3 h-3 text-blue-200" />
+                <ChevronDown className="w-3 h-3 text-teal-200" />
               </button>
               
               {isCityDropdownOpen && (
@@ -244,7 +244,7 @@ export default function Navbar({ currentCity, onCityChange, onServiceSelect }: N
                 key={menuItem.id}
                 href={`#${menuItem.id}`}
                 onClick={(e) => handleServiceClick(menuItem.id, e)}
-                className="bg-slate-50 hover:bg-blue-50 hover:text-secondary px-3.5 py-3 rounded-lg text-sm font-semibold text-slate-700 transition flex flex-col gap-0.5"
+                className="bg-slate-50 hover:bg-teal-50 hover:text-secondary px-3.5 py-3 rounded-lg text-sm font-semibold text-slate-700 transition flex flex-col gap-0.5"
               >
                 <span>{menuItem.label}</span>
                 <span className="text-[10px] text-slate-400 font-normal">Silo {menuItem.label}</span>

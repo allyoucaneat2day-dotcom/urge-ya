@@ -137,11 +137,11 @@ export default function BookingWizard({
             <div className="absolute top-0 left-0 right-0 h-1 bg-accent"></div>
             <div>
               <h3 className="font-display font-extrabold text-base sm:text-lg tracking-tight">Solicitud de Técnico Autorizado</h3>
-              <p className="text-[9px] sm:text-[10px] text-blue-200 font-extrabold uppercase tracking-wider">Presupuesto sin compromiso - Desplazamiento Gratis</p>
+              <p className="text-[9px] sm:text-[10px] text-teal-200 font-extrabold uppercase tracking-wider">Presupuesto sin compromiso - Desplazamiento Gratis</p>
             </div>
             <button 
               onClick={onClose}
-              className="text-blue-200 hover:text-white p-1 rounded-lg hover:bg-white/10 transition cursor-pointer"
+              className="text-teal-200 hover:text-white p-1 rounded-lg hover:bg-white/10 transition cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -199,7 +199,7 @@ export default function BookingWizard({
                         key={issue.id}
                         className={`flex items-start gap-3 p-3 rounded-lg border transition-all cursor-pointer text-left ${
                           issueId === issue.id
-                            ? 'bg-blue-50/40 border-secondary shadow-sm'
+                            ? 'bg-teal-50/60 border-secondary shadow-sm'
                             : 'bg-white border-slate-200 hover:border-slate-300'
                         }`}
                       >
@@ -221,7 +221,7 @@ export default function BookingWizard({
                     <label
                       className={`flex items-start gap-3 p-3 rounded-lg border transition-all cursor-pointer text-left ${
                         issueId === 'custom'
-                          ? 'bg-blue-50/40 border-secondary shadow-sm'
+                          ? 'bg-teal-50/60 border-secondary shadow-sm'
                           : 'bg-white border-slate-200 hover:border-slate-300'
                       }`}
                     >
@@ -365,7 +365,7 @@ export default function BookingWizard({
                       onClick={() => setUrgency('normal')}
                       className={`p-3 rounded-lg border text-left flex flex-col justify-between transition cursor-pointer ${
                         urgency === 'normal'
-                          ? 'bg-blue-50/30 border-secondary'
+                          ? 'bg-teal-50/50 border-secondary'
                           : 'bg-white border-slate-200 hover:border-slate-300'
                       }`}
                     >
@@ -417,7 +417,7 @@ export default function BookingWizard({
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="ml-auto px-5 py-2.5 bg-secondary hover:bg-blue-700 text-white rounded-lg text-xs font-extrabold cursor-pointer transition flex items-center gap-1 shadow-sm"
+                  className="ml-auto px-5 py-2.5 bg-secondary hover:bg-teal-700 text-white rounded-lg text-xs font-extrabold cursor-pointer transition flex items-center gap-1 shadow-sm"
                 >
                   <span>Continuar</span>
                   <ChevronRight className="w-4 h-4" />

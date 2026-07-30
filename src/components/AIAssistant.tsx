@@ -1903,7 +1903,7 @@ export default function AIAssistant({ currentCity, selectedServiceId = 'fontaner
                     className="flex items-center justify-center gap-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-[11px] font-bold py-1.5 px-2 rounded-xl transition cursor-pointer text-center truncate"
                     title={`Llamar ${currentCity.phoneFormatted}`}
                   >
-                    <Phone className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                    <Phone className="w-3.5 h-3.5 text-teal-400 shrink-0" />
                     <span className="truncate">{currentLabels.btnCall}</span>
                   </a>
 
